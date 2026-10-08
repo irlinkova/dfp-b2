@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Promouvoir un service — Transtour · DFP B2</title>
+<style>
+  :root{
+    --ink:#0E2647; --blue:#17457F; --blue2:#2C6AB4; --marsala:#8E2436; --marsala2:#A93344;
+    --line:#D8E4F2; --mist:#EAF1FA; --soft:#F4F8FD; --grey:#5F7A99;
+    --paper:#FAFCFF; --card:#FFFFFF;
+    --ok:#1E7A4C; --okbg:#EAF7F0; --ko:#B3262F; --kobg:#FDF1F2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,"Liberation Sans",Helvetica,sans-serif;color:var(--ink);
+       background:var(--paper);line-height:1.5;padding:0 16px 60px;-webkit-text-size-adjust:100%}
+  .wrap{max-width:1040px;margin:0 auto}
+
+  header{padding:30px 0 18px;border-bottom:2px solid var(--line);margin-bottom:24px}
+  .kicker{display:flex;align-items:center;gap:10px;color:var(--marsala);
+          font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase}
+  .kicker::before{content:"";width:28px;height:2px;background:var(--marsala);flex:none}
+  h1{font-family:Georgia,"Liberation Serif",serif;font-size:30px;margin-top:10px}
+  header p{color:var(--grey);font-size:14px;margin-top:6px}
+
+  /* contexte */
+  .ctx{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px}
+  .ctx > div{border-radius:12px;padding:20px 22px;color:#fff}
+  .ctx .sit{background:linear-gradient(100deg,var(--blue),var(--blue2))}
+  .ctx .tache{background:linear-gradient(100deg,var(--marsala),var(--marsala2))}
+  .ctx h2{font-family:Georgia,"Liberation Serif",serif;font-size:19px;margin-bottom:8px}
+  .ctx h2::after{content:"";display:block;width:46px;height:2px;background:#fff;margin-top:7px}
+  .ctx p{font-size:15px}
+  .ctx ol{list-style:none;counter-reset:t;margin-top:4px}
+  .ctx ol li{counter-increment:t;position:relative;padding-left:30px;margin-top:9px;font-size:14px}
+  .ctx ol li::before{content:counter(t);position:absolute;left:0;top:1px;width:21px;height:21px;
+    border-radius:50%;background:#fff;color:var(--marsala);font-size:11.5px;font-weight:700;
+    display:flex;align-items:center;justify-content:center}
+
+  /* étapes */
+  section{background:var(--card);border:1px solid var(--line);border-radius:12px;
+          margin-bottom:26px;overflow:hidden}
+  .bar{height:3px;background:var(--blue)}
+  .bar.m{background:var(--marsala)}
+  .head{display:flex;align-items:center;gap:12px;padding:18px 22px 0}
+  .step{flex:none;width:30px;height:30px;border-radius:9px;background:var(--blue);color:#fff;
+        font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .step.m{background:var(--marsala)}
+  h2.t{font-family:Georgia,"Liberation Serif",serif;font-size:19px}
+  .hint{color:var(--grey);font-size:13.5px;padding:8px 22px 14px}
+
+  /* audio */
+  .player{padding:0 22px 4px}
+  audio{width:100%;max-width:560px;display:block}
+  .warn{display:none;margin:10px 0 0;padding:10px 14px;border-radius:8px;
+        background:var(--kobg);border:1px solid #F0CBCE;color:var(--ko);font-size:13px}
+  .warn.show{display:block}
+  details{margin:14px 0 0;border:1px solid var(--line);border-radius:9px;background:var(--soft)}
+  summary{cursor:pointer;padding:10px 14px;font-size:13.5px;font-weight:700;color:var(--blue)}
+  details p{padding:0 14px 14px;font-size:13.5px;color:var(--ink)}
+  details p + p{padding-top:10px}
+
+  /* demandes */
+  table.dem{width:100%;border-collapse:collapse}
+  .demwrap{padding:0 22px}
+  table.dem td{padding:9px 0;border-bottom:1px solid var(--line);vertical-align:middle}
+  table.dem tr:last-child td{border-bottom:none}
+  td.lbl{width:38%;font-size:14px;font-weight:700;color:var(--blue);padding-right:14px}
+  td.ans input{width:100%;font:inherit;font-size:14.5px;color:var(--ink);
+    border:1px solid var(--line);background:var(--soft);border-radius:7px;padding:8px 11px}
+  td.ans input:focus{outline:none;border-color:var(--blue2);background:#fff}
+  td.ans input.good{border-color:var(--ok);background:var(--okbg);color:var(--ok);font-weight:700}
+  td.ans input.bad{border-color:var(--ko);background:var(--kobg)}
+  .sol{display:none;font-size:12.5px;color:var(--ok);padding-top:5px}
+  .sol.show{display:block}
+
+  /* mail */
+  .mail{margin:0 22px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+  .mailbar{height:30px;background:var(--mist);border-bottom:1px solid var(--line);
+           display:flex;align-items:center;gap:7px;padding:0 14px}
+  .dot{width:9px;height:9px;border-radius:50%}
+  .mailfields{padding:12px 18px 6px;border-bottom:1px solid var(--line)}
+  .mailfields div{font-size:13px;color:var(--grey);padding:2px 0}
+  .mailfields b{color:var(--ink);font-weight:700}
+  .body{padding:16px 18px 18px;font-size:14px;line-height:1.62}
+  .body p{margin-bottom:10px}
+  .sig{font-size:13px;line-height:1.5;color:var(--ink);margin-top:14px}
+  .sig b{color:var(--blue)}
+
+  span.fix{
+    display:inline-block;min-width:40px;padding:1px 7px;margin:0 1px;
+    border-bottom:1.5px solid var(--marsala);background:#FDF2F3;border-radius:4px 4px 0 0;
+    color:var(--marsala);font-weight:700;outline:none;white-space:pre-wrap;
+  }
+  span.fix:focus{background:#fff;border-bottom-color:var(--blue2);color:var(--blue)}
+  span.fix.good{background:var(--okbg);border-bottom-color:var(--ok);color:var(--ok)}
+  span.fix.bad{background:var(--kobg);border-bottom-color:var(--ko);color:var(--ko)}
+
+  /* actions */
+  .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:18px 22px 22px}
+  button.act{font:inherit;font-size:14px;font-weight:700;border-radius:8px;padding:10px 20px;
+             border:1px solid var(--blue);background:var(--blue);color:#fff;cursor:pointer}
+  button.act:hover{background:var(--blue2);border-color:var(--blue2)}
+  button.act.ghostbtn{background:#fff;color:var(--blue)}
+  button.act.ghostbtn:hover{background:var(--mist)}
+  .score{font-size:14px;font-weight:700;color:var(--grey);margin-left:auto}
+  .score.ok{color:var(--ok)} .score.ko{color:var(--ko)}
+  .banner{margin:0 22px;padding:12px 16px;border-radius:9px;font-size:14px;display:none}
+  .banner.show{display:block}
+  .banner.ok{background:var(--okbg);border:1px solid #BFE3D0;color:var(--ok)}
+  .banner.ko{background:var(--kobg);border:1px solid #F0CBCE;color:var(--ko)}
+
+  footer{color:var(--grey);font-size:12.5px;text-align:center;padding-top:10px;border-top:1px solid var(--line)}
+  @media (max-width:760px){
+    .ctx{grid-template-columns:1fr}
+    h1{font-size:24px}
+    td.lbl{width:100%;display:block;border:none;padding-bottom:4px}
+    td.ans{display:block;padding-top:0}
+    table.dem tr{display:block;border-bottom:1px solid var(--line);padding:8px 0}
+    table.dem td{border:none}
+    .score{margin-left:0;flex-basis:100%}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">Français des affaires · B2 · Mise en jeu 1</div>
+  <h1>Promouvoir un service — agence Transtour</h1>
+  <p>Travail en quatre temps. Tout se corrige sur la page, rien n’est envoyé.</p>
+</header>
+
+<div class="ctx">
+  <div class="sit">
+    <h2>Situation</h2>
+    <p>Vous travaillez dans une agence de voyages. Vous devez valider une proposition de circuit à envoyer à un client.</p>
+  </div>
+  <div class="tache">
+    <h2>Votre tâche</h2>
+    <ol>
+      <li>Écoutez le message laissé par le client et lisez le mail préparé par votre stagiaire.</li>
+      <li>Vérifiez que la réponse correspond bien à la demande et que les prestations complémentaires sont proposées.</li>
+      <li>Apportez des corrections et modifications nécessaires.</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ===== 1. audio ===== -->
+<section>
+  <div class="bar"></div>
+  <div class="head"><span class="step">1</span><h2 class="t">Écoutez le message sur la boîte vocale</h2></div>
+  <p class="hint">Vous pouvez réécouter autant de fois que nécessaire. Prenez des notes avant de passer à l’étape 2.</p>
+  <div class="player">
+    <audio id="au" controls preload="metadata"></audio>
+    <div class="warn" id="auwarn">L’enregistrement n’a pas pu être chargé. Vérifiez que le fichier se trouve bien à côté de cette page.</div>
+    <details>
+      <summary>Afficher la transcription</summary>
+      <p>« Agence Transtour, bonjour. Nos bureaux sont actuellement fermés. Vous pouvez laisser un message après le bip sonore ou renouveler votre appel du mardi au samedi de 10 h 30 à 12 h 30 et de 14 h à 18 h. Merci ! »</p>
+      <p>« Bonjour, c’est M. Ruffin. Je vous appelle au sujet d’un voyage en Thaïlande du 16 au 27 février que je voudrais organiser pour notre anniversaire de mariage. Nous serons quatre adultes. Pourriez-vous m’envoyer un mail avec une proposition en demi-pension et un programme de visites et d’activités sportives ? Ma femme voudrait aussi des cours de cuisine thaïlandaise. J’attends votre devis avec une assurance annulation comprise. Merci. Au revoir. »</p>
+    </details>
+  </div>
+  <div class="actions" style="padding-bottom:18px"></div>
+</section>
+
+<!-- ===== 2. demandes ===== -->
+<section>
+  <div class="bar m"></div>
+  <div class="head"><span class="step m">2</span><h2 class="t">Les demandes du client</h2></div>
+  <p class="hint">Complétez la fiche d’après le message. Une réponse courte suffit.</p>
+  <div class="demwrap"><table class="dem"><tbody id="dem"></tbody></table></div>
+  <div class="actions">
+    <button class="act" id="checkD">Vérifier</button>
+    <button class="act ghostbtn" id="solveD">Afficher la correction</button>
+    <button class="act ghostbtn" id="resetD">Effacer</button>
+    <span class="score" id="scoreD"></span>
+  </div>
+  <div class="banner" id="banD" style="margin-bottom:18px"></div>
+</section>
+
+<!-- ===== 3. mail ===== -->
+<section>
+  <div class="bar"></div>
+  <div class="head"><span class="step">3</span><h2 class="t">Le mail préparé par votre stagiaire</h2></div>
+  <p class="hint">Lisez le mail et comparez-le aux demandes du client. Les passages en rouge sont modifiables : cliquez dessus et corrigez-les directement.</p>
+  <div class="mail">
+    <div class="mailbar">
+      <span class="dot" style="background:#E06C75"></span>
+      <span class="dot" style="background:#E5C07B"></span>
+      <span class="dot" style="background:#98C379"></span>
+    </div>
+    <div class="mailfields">
+      <div>De : <b>Transtour</b></div>
+      <div>À : <b>M. Rufin</b></div>
+      <div>Objet : <b>Voyage en Thaïlande</b></div>
+    </div>
+    <div class="body" id="mail"></div>
+  </div>
+  <div class="actions">
+    <button class="act" id="checkM">Vérifier mes corrections</button>
+    <button class="act ghostbtn" id="solveM">Afficher la correction</button>
+    <button class="act ghostbtn" id="resetM">Recommencer</button>
+    <span class="score" id="scoreM"></span>
+  </div>
+  <div class="banner" id="banM" style="margin-bottom:18px"></div>
+</section>
+
+<footer>Centre de langue française · MGIMO — CCI Paris Île-de-France · Lettres publicitaires, DFP B2</footer>
+</div>
+
+<script>
+/* ====== fichier audio : placez-le à côté de cette page ====== */
+const AUDIO = "transtour.mp3";
+
+const au = document.getElementById('au');
+au.src = AUDIO;
+au.addEventListener('error', () => document.getElementById('auwarn').classList.add('show'));
+
+/* ====== outils ====== */
+const norm = s => (s || '').toLowerCase()
+  .normalize('NFD').replace(/[̀-ͯ]/g,'')
+  .replace(/[«».,;:!?’'()\-]/g,' ').replace(/\s+/g,' ').trim();
+const has = (v, keys) => keys.every(k => norm(v).includes(k));
+
+/* ====== 2. demandes du client ====== */
+const DEM = [
+  { lbl:"Nombre de personnes",        keys:[["quatre"],["4"]],              sol:"quatre adultes" },
+  { lbl:"Dates du séjour",            keys:[["16","27"]],                   sol:"du 16 au 27 février" },
+  { lbl:"Formule d’hébergement",      keys:[["demi pension"],["demi"]],     sol:"en demi-pension" },
+  { lbl:"Programme souhaité",         keys:[["sport"]],                     sol:"visites et activités sportives" },
+  { lbl:"Souhait de Madame",          keys:[["cuisine"]],                   sol:"des cours de cuisine thaïlandaise" },
+  { lbl:"À comprendre dans le devis", keys:[["annulation"]],                sol:"une assurance annulation" },
+  { lbl:"Occasion du voyage",         keys:[["mariage"]],                   sol:"leur anniversaire de mariage" }
+];
+const dem = document.getElementById('dem');
+DEM.forEach((d,i) => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = '<td class="lbl">' + d.lbl + '</td>' +
+    '<td class="ans"><input type="text" autocomplete="off" spellcheck="false" aria-label="' + d.lbl + '">' +
+    '<div class="sol">→ ' + d.sol + '</div></td>';
+  dem.appendChild(tr);
+});
+const dIn = [...dem.querySelectorAll('input')];
+dIn.forEach(i => i.addEventListener('input', () => {
+  i.classList.remove('good','bad');
+  document.getElementById('banD').className = 'banner';
+  document.getElementById('scoreD').textContent = '';
+}));
+
+function markD(){
+  let ok = 0;
+  dIn.forEach((inp,i) => {
+    const good = DEM[i].keys.some(k => has(inp.value, k));
+    inp.classList.toggle('good', good);
+    inp.classList.toggle('bad', !good);
+    if (good) ok++;
+  });
+  return ok;
+}
+document.getElementById('checkD').onclick = () => {
+  const ok = markD();
+  const sc = document.getElementById('scoreD');
+  sc.textContent = ok + ' / ' + DEM.length;
+  sc.className = 'score ' + (ok === DEM.length ? 'ok' : 'ko');
+  const b = document.getElementById('banD');
+  b.className = 'banner ' + (ok === DEM.length ? 'ok' : 'ko') + ' show';
+  b.textContent = ok === DEM.length
+    ? 'La fiche est complète : vous pouvez passer au mail.'
+    : 'Réécoutez le message : les lignes en rouge ne correspondent pas encore à la demande.';
+};
+document.getElementById('solveD').onclick = () => {
+  dIn.forEach((inp,i) => { inp.value = DEM[i].sol; inp.classList.remove('bad'); inp.classList.add('good'); });
+  document.getElementById('scoreD').textContent = 'correction';
+  document.getElementById('scoreD').className = 'score ok';
+  document.getElementById('banD').className = 'banner';
+};
+document.getElementById('resetD').onclick = () => {
+  dIn.forEach(i => { i.value = ''; i.classList.remove('good','bad'); });
+  document.getElementById('scoreD').textContent = '';
+  document.getElementById('banD').className = 'banner';
+};
+
+/* ====== 3. le mail ====== */
+const WRONG = [
+  "deux",
+  "du 13 au 25 février",
+  "du 14 au 17 février",
+  "Le 17 février",
+  "Du 20 au 24 février",
+  "Le 25 février",
+  "une assistance à l’aéroport pour l’enregistrement des bagages. Vous éviterez ainsi les longues files d’attente aux contrôles.",
+  "un dîner d’anniversaire",
+  "les prestations supplémentaires que vous désirez"
+];
+const RIGHT = [
+  "quatre",
+  "du 16 au 27 février",
+  "du 17 au 20 février",
+  "Le 20 février",
+  "Du 23 au 26 février",
+  "Le 27 février",
+  "une assurance annulation du voyage",
+  "un dîner festif d’anniversaire de mariage",
+  "les activités sportives"
+];
+const KEYS = [
+  ["quatre"], ["16","27"], ["17","20"], ["20"], ["23","26"], ["27"],
+  ["assurance","annulation"], ["mariage"], ["sport"]
+];
+
+const PARS = [
+  "Comme suite à votre demande concernant votre voyage annuel en Thaïlande pour |0| personnes en demi-pension |1|, nous vous remercions de votre confiance et vous faisons une proposition de programme.",
+  "Vous séjournerez à Bangkok |2|. Notre guide local vous accueillera à l’aéroport et vous accompagnera à votre hôtel. La première journée sera libre et vous pourrez profiter de la ville à votre rythme. Nous organiserons pour vous les visites que vous souhaitez faire et pourrons vous aider à trouver de bons restaurants pour vos déjeuners. Vous logerez dans des hôtels de charme.",
+  "|3|, vous vous envolerez pour le nord de la Thaïlande, à Chiang Mai, où vous resterez trois nuits. |4|, vous continuerez votre circuit en mini-bus climatisé. Vous visiterez un site incontournable qui vaut le détour, les grottes de Tam Lod où tous les guides sont du village, un bon exemple de tourisme communautaire.",
+  "Ensuite, vous irez jusqu’à Mae Hong Son, petite ville située dans un cadre pittoresque, où vous embarquerez à bord d’un bateau qui navigue à travers la jungle thaïlandaise. Vous découvrirez un paysage grandiose et luxuriant. Les habitants des villages vous recevront avec beaucoup de gentillesse. C’est vraiment une magnifique expérience à ne pas manquer.",
+  "|5|, vous prendrez votre vol pour Paris via Bangkok où vous resterez une nuit.",
+  "Nous assurerons pour vous |6| Nous nous occupons de tout.",
+  "Nous pouvons aussi nous charger de l’organisation d’|7| dans un endroit inoubliable. Nous vous proposons un service d’assistance 24 h/24 h en cas de besoin.",
+  "Dès aujourd’hui, nous allons contacter notre réceptif local pour nous assurer de la disponibilité des hôtels et nous vous enverrons une cotation quand nous aurons une réponse ferme. Nous allons aussi nous renseigner pour les cours de cuisine et nous vous tiendrons au courant.",
+  "Nous aimerions vous envoyer notre offre dans les meilleurs délais. Pourriez-vous nous donner votre avis sur les détails de ce circuit et nous préciser |8| ? Vous pouvez compter sur nous pour faire de votre voyage sur-mesure l’un de vos meilleurs souvenirs.",
+  "Dans l’attente de votre réponse, nous vous prions de recevoir, cher Monsieur, nos meilleures salutations."
+];
+
+const esc = t => t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const mail = document.getElementById('mail');
+let html = '<p>Cher Monsieur,</p>';
+PARS.forEach(par => {
+  html += '<p>' + par.split('|').map((piece, k) => {
+    if (k % 2 === 1){
+      const n = +piece;
+      return '<span class="fix" contenteditable="true" spellcheck="false" data-n="' + n + '">' + esc(WRONG[n]) + '</span>';
+    }
+    return esc(piece);
+  }).join('') + '</p>';
+});
+html += '<div class="sig"><b>L’équipe Transtour</b><br><br><b>Agence Transtour</b><br>' +
+        '25 avenue du Touring Club<br>68 rue de l’Université<br>69007 Lyon<br>Tél. : 04 98 78 54 12</div>';
+mail.innerHTML = html;
+
+const spans = [...mail.querySelectorAll('span.fix')];
+spans.forEach(sp => {
+  sp.addEventListener('input', () => {
+    sp.classList.remove('good','bad');
+    document.getElementById('banM').className = 'banner';
+    document.getElementById('scoreM').textContent = '';
+  });
+  sp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); sp.blur(); } });
+});
+
+document.getElementById('checkM').onclick = () => {
+  let ok = 0;
+  spans.forEach(sp => {
+    const n = +sp.dataset.n;
+    const good = has(sp.textContent, KEYS[n]) && norm(sp.textContent) !== norm(WRONG[n]);
+    sp.classList.toggle('good', good);
+    sp.classList.toggle('bad', !good);
+    if (good) ok++;
+  });
+  const sc = document.getElementById('scoreM');
+  sc.textContent = ok + ' / ' + spans.length;
+  sc.className = 'score ' + (ok === spans.length ? 'ok' : 'ko');
+  const b = document.getElementById('banM');
+  b.className = 'banner ' + (ok === spans.length ? 'ok' : 'ko') + ' show';
+  b.textContent = ok === spans.length
+    ? 'Le mail correspond maintenant à la demande du client.'
+    : 'Les passages en rouge ne correspondent toujours pas au message laissé par M. Ruffin.';
+};
+document.getElementById('solveM').onclick = () => {
+  spans.forEach(sp => {
+    sp.textContent = RIGHT[+sp.dataset.n];
+    sp.classList.remove('bad'); sp.classList.add('good');
+  });
+  document.getElementById('scoreM').textContent = 'correction';
+  document.getElementById('scoreM').className = 'score ok';
+  document.getElementById('banM').className = 'banner';
+};
+document.getElementById('resetM').onclick = () => {
+  spans.forEach(sp => {
+    sp.textContent = WRONG[+sp.dataset.n];
+    sp.classList.remove('good','bad');
+  });
+  document.getElementById('scoreM').textContent = '';
+  document.getElementById('banM').className = 'banner';
+};
+</script>
+</body>
+</html>
