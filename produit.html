@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Promouvoir un produit — DFP B2</title>
+<style>
+  :root{
+    --ink:#0E2647; --blue:#17457F; --blue2:#2C6AB4; --marsala:#8E2436; --marsala2:#A93344;
+    --line:#D8E4F2; --mist:#EAF1FA; --soft:#F4F8FD; --grey:#5F7A99;
+    --paper:#FAFCFF; --card:#FFFFFF;
+    --ok:#1E7A4C; --okbg:#EAF7F0; --ko:#B3262F; --kobg:#FDF1F2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,"Liberation Sans",Helvetica,sans-serif;color:var(--ink);
+       background:var(--paper);line-height:1.5;padding:0 16px 60px;-webkit-text-size-adjust:100%}
+  .wrap{max-width:1040px;margin:0 auto}
+
+  header{padding:30px 0 18px;border-bottom:2px solid var(--line);margin-bottom:24px}
+  .kicker{display:flex;align-items:center;gap:10px;color:var(--marsala);
+          font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase}
+  .kicker::before{content:"";width:28px;height:2px;background:var(--marsala);flex:none}
+  h1{font-family:Georgia,"Liberation Serif",serif;font-size:30px;margin-top:10px}
+  header p{color:var(--grey);font-size:14px;margin-top:6px}
+
+  .ctx{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px}
+  .ctx > div{border-radius:12px;padding:20px 22px;color:#fff}
+  .ctx .sit{background:linear-gradient(100deg,var(--blue),var(--blue2))}
+  .ctx .tache{background:linear-gradient(100deg,var(--marsala),var(--marsala2))}
+  .ctx h2{font-family:Georgia,"Liberation Serif",serif;font-size:19px;margin-bottom:8px}
+  .ctx h2::after{content:"";display:block;width:46px;height:2px;background:#fff;margin-top:7px}
+  .ctx p{font-size:15px}
+  .ctx ol{list-style:none;counter-reset:t;margin-top:4px}
+  .ctx ol li{counter-increment:t;position:relative;padding-left:30px;margin-top:9px;font-size:14px}
+  .ctx ol li::before{content:counter(t);position:absolute;left:0;top:1px;width:21px;height:21px;
+    border-radius:50%;background:#fff;color:var(--marsala);font-size:11.5px;font-weight:700;
+    display:flex;align-items:center;justify-content:center}
+
+  section{background:var(--card);border:1px solid var(--line);border-radius:12px;
+          margin-bottom:26px;overflow:hidden}
+  .bar{height:3px;background:var(--blue)}
+  .bar.m{background:var(--marsala)}
+  .head{display:flex;align-items:center;gap:12px;padding:18px 22px 0}
+  .step{flex:none;width:30px;height:30px;border-radius:9px;background:var(--blue);color:#fff;
+        font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .step.m{background:var(--marsala)}
+  h2.t{font-family:Georgia,"Liberation Serif",serif;font-size:19px}
+  .hint{color:var(--grey);font-size:13.5px;padding:8px 22px 14px}
+
+  .player{padding:0 22px 18px}
+  audio{width:100%;max-width:560px;display:block}
+  .warn{display:none;margin:10px 0 0;padding:10px 14px;border-radius:8px;
+        background:var(--kobg);border:1px solid #F0CBCE;color:var(--ko);font-size:13px}
+  .warn.show{display:block}
+
+  /* fiche / besoins */
+  .rows{padding:0 22px}
+  .row{display:flex;align-items:flex-start;gap:14px;padding:9px 0;border-bottom:1px solid var(--line)}
+  .row:last-child{border-bottom:none}
+  .lbl{flex:none;width:210px;font-size:12.5px;font-weight:700;color:var(--blue);
+       background:var(--mist);border-radius:7px;padding:8px 12px;text-align:center}
+  .fld{flex:1 1 auto;min-width:0}
+  .fld input, .fld textarea{
+    width:100%;font:inherit;font-size:14.5px;color:var(--ink);
+    border:1px solid var(--line);background:var(--soft);border-radius:7px;padding:8px 11px}
+  .fld textarea{resize:vertical;min-height:72px;line-height:1.5}
+  .fld input:focus, .fld textarea:focus{outline:none;border-color:var(--blue2);background:#fff}
+  .fld input.good, .fld textarea.good{border-color:var(--ok);background:var(--okbg);color:var(--ok);font-weight:700}
+  .fld input.bad, .fld textarea.bad{border-color:var(--ko);background:var(--kobg)}
+  .fld input[readonly]{background:#fff;color:var(--blue2);font-weight:700}
+  .sol{display:none;font-size:12.5px;color:var(--ok);padding-top:5px}
+  .sol.show{display:block}
+
+  /* rédaction */
+  .mail{margin:0 22px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+  .mailbar{height:30px;background:var(--mist);border-bottom:1px solid var(--line);
+           display:flex;align-items:center;gap:7px;padding:0 14px}
+  .dot{width:9px;height:9px;border-radius:50%}
+  .mailrow{display:flex;align-items:center;border-bottom:1px solid var(--line)}
+  .mailrow span{flex:none;width:72px;padding:0 0 0 18px;font-size:13px;color:var(--grey);font-weight:700}
+  .mailrow input{flex:1 1 auto;font:inherit;font-size:14px;border:none;padding:10px 14px 10px 0;
+                 background:transparent;color:var(--ink)}
+  .mailrow input:focus{outline:none}
+  #corps{width:100%;border:none;padding:14px 18px;font:inherit;font-size:14.5px;line-height:1.6;
+         min-height:280px;resize:vertical;background:transparent;color:var(--ink)}
+  #corps:focus{outline:none}
+  .meta{display:flex;gap:16px;align-items:center;padding:10px 18px;border-top:1px solid var(--line);
+        background:var(--soft);font-size:12.5px;color:var(--grey)}
+  .checklist{margin:16px 22px 0;background:var(--soft);border:1px solid var(--line);
+             border-radius:9px;padding:12px 16px}
+  .checklist b{font-size:13px;color:var(--marsala)}
+  .checklist ul{list-style:none;margin-top:7px;columns:2;column-gap:26px;font-size:13px;color:var(--ink)}
+  .checklist li{padding:2px 0 2px 16px;position:relative;break-inside:avoid}
+  .checklist li::before{content:"·";position:absolute;left:4px;color:var(--marsala);font-weight:700}
+
+  .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:18px 22px 22px}
+  button.act{font:inherit;font-size:14px;font-weight:700;border-radius:8px;padding:10px 20px;
+             border:1px solid var(--blue);background:var(--blue);color:#fff;cursor:pointer}
+  button.act:hover{background:var(--blue2);border-color:var(--blue2)}
+  button.act.ghostbtn{background:#fff;color:var(--blue)}
+  button.act.ghostbtn:hover{background:var(--mist)}
+  .score{font-size:14px;font-weight:700;color:var(--grey);margin-left:auto}
+  .score.ok{color:var(--ok)} .score.ko{color:var(--ko)}
+  .banner{margin:0 22px;padding:12px 16px;border-radius:9px;font-size:14px;display:none}
+  .banner.show{display:block}
+  .banner.ok{background:var(--okbg);border:1px solid #BFE3D0;color:var(--ok)}
+  .banner.ko{background:var(--kobg);border:1px solid #F0CBCE;color:var(--ko)}
+
+  footer{color:var(--grey);font-size:12.5px;text-align:center;padding-top:10px;border-top:1px solid var(--line)}
+  @media (max-width:760px){
+    .ctx{grid-template-columns:1fr}
+    h1{font-size:24px}
+    .row{flex-direction:column;gap:6px}
+    .lbl{width:100%;text-align:left}
+    .checklist ul{columns:1}
+    .score{margin-left:0;flex-basis:100%}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">Français des affaires · B2 · Mise en jeu 2</div>
+  <h1>Promouvoir un produit — la fiche technique</h1>
+  <p>Travail en cinq temps. Tout se corrige sur la page, rien n’est envoyé.</p>
+</header>
+
+<div class="ctx">
+  <div class="sit">
+    <h2>Situation</h2>
+    <p>Vous travaillez dans un magasin de matériel numérique. Vous êtes chargé(e) de faire la fiche technique d’un ordinateur.</p>
+  </div>
+  <div class="tache">
+    <h2>Votre tâche</h2>
+    <ol>
+      <li>Écoutez la conversation entre un de vos collègues et une cliente, puis complétez la fiche.</li>
+      <li>Notez les besoins de la clientèle.</li>
+      <li>Rédigez un e-mail promotionnel à partir de la fiche et de vos notes.</li>
+    </ol>
+  </div>
+</div>
+
+<!-- 1 -->
+<section>
+  <div class="bar"></div>
+  <div class="head"><span class="step">1</span><h2 class="t">Écoutez la conversation</h2></div>
+  <p class="hint">Première écoute : concentrez-vous sur l’appareil et sur ses caractéristiques.</p>
+  <div class="player">
+    <audio class="au" controls preload="metadata"></audio>
+    <div class="warn auwarn">L’enregistrement n’a pas pu être chargé. Vérifiez que le fichier se trouve bien à côté de cette page.</div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section>
+  <div class="bar m"></div>
+  <div class="head"><span class="step m">2</span><h2 class="t">Fiche technique</h2></div>
+  <p class="hint">Complétez la fiche. Une réponse courte suffit ; les accents et les majuscules ne sont pas comptés.</p>
+  <div class="rows" id="fiche"></div>
+  <div class="actions">
+    <button class="act" data-check="fiche">Vérifier</button>
+    <button class="act ghostbtn" data-solve="fiche">Afficher la correction</button>
+    <button class="act ghostbtn" data-reset="fiche">Effacer</button>
+    <span class="score" id="score-fiche"></span>
+  </div>
+  <div class="banner" id="ban-fiche" style="margin-bottom:18px"></div>
+</section>
+
+<!-- 3 -->
+<section>
+  <div class="bar"></div>
+  <div class="head"><span class="step">3</span><h2 class="t">Réécoutez la conversation</h2></div>
+  <p class="hint">Deuxième écoute : cette fois, repérez ce que la cliente veut faire de son ordinateur.</p>
+  <div class="player">
+    <audio class="au" controls preload="metadata"></audio>
+    <div class="warn auwarn">L’enregistrement n’a pas pu être chargé. Vérifiez que le fichier se trouve bien à côté de cette page.</div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section>
+  <div class="bar m"></div>
+  <div class="head"><span class="step m">4</span><h2 class="t">Besoins du client</h2></div>
+  <p class="hint">Notez ce que la cliente demande. Ce sont ces besoins que votre e-mail devra satisfaire.</p>
+  <div class="rows" id="besoins"></div>
+  <div class="actions">
+    <button class="act" data-check="besoins">Vérifier</button>
+    <button class="act ghostbtn" data-solve="besoins">Afficher la correction</button>
+    <button class="act ghostbtn" data-reset="besoins">Effacer</button>
+    <span class="score" id="score-besoins"></span>
+  </div>
+  <div class="banner" id="ban-besoins" style="margin-bottom:18px"></div>
+</section>
+
+<!-- 5 -->
+<section>
+  <div class="bar"></div>
+  <div class="head"><span class="step">5</span><h2 class="t">Rédigez l’e-mail promotionnel</h2></div>
+  <p class="hint">Appuyez-vous sur la fiche technique et sur les besoins de la cliente. Votre brouillon reste enregistré dans ce navigateur.</p>
+  <div class="mail">
+    <div class="mailbar">
+      <span class="dot" style="background:#E06C75"></span>
+      <span class="dot" style="background:#E5C07B"></span>
+      <span class="dot" style="background:#98C379"></span>
+    </div>
+    <div class="mailrow"><span>À :</span><input id="dest" type="text" autocomplete="off" placeholder="b.legrand@…"></div>
+    <div class="mailrow"><span>Objet :</span><input id="objet" type="text" autocomplete="off" placeholder="…"></div>
+    <textarea id="corps" placeholder="Madame,&#10;&#10;…"></textarea>
+    <div class="meta"><span id="mots">0 mot</span><span id="saved"></span></div>
+  </div>
+  <div class="checklist">
+    <b>Pensez à :</b>
+    <ul>
+      <li>un objet clair et incitatif</li>
+      <li>une formule d’appel adaptée</li>
+      <li>le produit et sa référence</li>
+      <li>les caractéristiques qui répondent à ses besoins</li>
+      <li>la housse et la facture demandées</li>
+      <li>le prix, la garantie, l’autonomie</li>
+      <li>une conclusion et une formule de politesse</li>
+      <li>une signature avec vos coordonnées</li>
+    </ul>
+  </div>
+  <div class="actions">
+    <button class="act" id="dl">Télécharger une copie</button>
+    <button class="act ghostbtn" id="copy">Copier le texte</button>
+    <button class="act ghostbtn" id="clear">Effacer</button>
+  </div>
+</section>
+
+<footer>Centre de langue française · MGIMO — CCI Paris Île-de-France · Lettres publicitaires, DFP B2</footer>
+</div>
+
+<script>
+/* ====== fichier audio : placez-le à côté de cette page ====== */
+const AUDIO = "produit.mp3";
+document.querySelectorAll('audio.au').forEach((a,i) => {
+  a.src = AUDIO;
+  a.addEventListener('error', () => document.querySelectorAll('.auwarn')[i].classList.add('show'));
+});
+
+const norm = s => (s || '').toLowerCase()
+  .normalize('NFD').replace(/[̀-ͯ]/g,'')
+  .replace(/[«».,;:!?’'()\-–—]/g,' ').replace(/\s+/g,' ').trim();
+const hasAll = (v, keys) => keys.every(k => norm(v).includes(k));
+const countOf = (v, stems) => stems.filter(k => norm(v).includes(k)).length;
+
+/* ====== données ====== */
+const FICHE = [
+  { lbl:"Produit", any:[["ordinateur"]], sol:"un ordinateur portable" },
+  { lbl:"Référence produit", fixed:"PXR 478" },
+  { lbl:"Prix", any:[["500"]], sol:"500 €" },
+  { lbl:"Autonomie", any:[["3","30"]], sol:"3 h 30" },
+  { lbl:"Garantie", any:[["1 an"],["un an"]], sol:"1 an" },
+  { lbl:"Poids", any:[["moins","kilo"],["moins","kg"],["1 kilo"],["1 kg"]], sol:"moins de 1 kilo" },
+  { lbl:"Points forts", big:true, min:5,
+    of:["texte","photo","video","internet","disque","communication"],
+    sol:"traitement de texte ; gestion des photos ; réalisation des vidéos ; communication par vidéo ; connexion rapide à Internet ; capacité de son disque dur — 2 Go ; possibilité d’y brancher un disque dur externe" }
+];
+
+const BESOINS = [
+  { lbl:"La cliente", any:[["legrand"]], sol:"Madame Brigitte Legrand" },
+  { lbl:"Appareil souhaité", any:[["portable"]], sol:"un ordinateur portable" },
+  { lbl:"Pourquoi en a-t-elle besoin ?", big:true, min:3,
+    of:["deplacement","messagerie","internet"],
+    sol:"pour ses déplacements ; pour consulter sa messagerie ; pour surfer sur Internet" },
+  { lbl:"Autre usage souhaité", any:[["photo"]], sol:"y stocker ses photos" },
+  { lbl:"Accessoire demandé", any:[["housse"]], sol:"une housse de protection" },
+  { lbl:"Document demandé", any:[["facture"]], sol:"une facture" }
+];
+
+const SETS = { fiche:FICHE, besoins:BESOINS };
+const FIELDS = {};
+
+function build(id, data){
+  const box = document.getElementById(id);
+  FIELDS[id] = [];
+  data.forEach((d,i) => {
+    const row = document.createElement('div');
+    row.className = 'row';
+    const ctl = d.fixed
+      ? '<input type="text" value="' + d.fixed + '" readonly>'
+      : (d.big
+          ? '<textarea autocomplete="off" spellcheck="false" aria-label="' + d.lbl + '"></textarea>'
+          : '<input type="text" autocomplete="off" spellcheck="false" aria-label="' + d.lbl + '">');
+    row.innerHTML = '<div class="lbl">' + d.lbl + ' :</div>' +
+                    '<div class="fld">' + ctl + '<div class="sol">→ ' + (d.sol || d.fixed) + '</div></div>';
+    box.appendChild(row);
+    const el = row.querySelector('input, textarea');
+    FIELDS[id].push(el);
+    if (!d.fixed) el.addEventListener('input', () => {
+      el.classList.remove('good','bad');
+      document.getElementById('ban-' + id).className = 'banner';
+      document.getElementById('score-' + id).textContent = '';
+    });
+  });
+}
+build('fiche', FICHE);
+build('besoins', BESOINS);
+
+function isGood(d, v){
+  if (d.fixed) return true;
+  if (d.min) return countOf(v, d.of) >= d.min;
+  return d.any.some(k => hasAll(v, k));
+}
+
+document.querySelectorAll('[data-check]').forEach(btn => btn.onclick = () => {
+  const id = btn.dataset.check, data = SETS[id];
+  let ok = 0, total = 0;
+  FIELDS[id].forEach((el,i) => {
+    if (data[i].fixed) return;
+    total++;
+    const good = isGood(data[i], el.value);
+    el.classList.toggle('good', good);
+    el.classList.toggle('bad', !good);
+    if (good) ok++;
+  });
+  const sc = document.getElementById('score-' + id);
+  sc.textContent = ok + ' / ' + total;
+  sc.className = 'score ' + (ok === total ? 'ok' : 'ko');
+  const b = document.getElementById('ban-' + id);
+  b.className = 'banner ' + (ok === total ? 'ok' : 'ko') + ' show';
+  b.textContent = ok === total
+    ? (id === 'fiche' ? 'La fiche est complète. Réécoutez pour relever les besoins de la cliente.'
+                      : 'Tous les besoins sont relevés : vous pouvez rédiger l’e-mail.')
+    : 'Réécoutez l’enregistrement : les champs en rouge sont incomplets.';
+});
+
+document.querySelectorAll('[data-solve]').forEach(btn => btn.onclick = () => {
+  const id = btn.dataset.solve, data = SETS[id];
+  FIELDS[id].forEach((el,i) => {
+    if (data[i].fixed) return;
+    el.value = data[i].sol;
+    el.classList.remove('bad'); el.classList.add('good');
+  });
+  document.getElementById('score-' + id).textContent = 'correction';
+  document.getElementById('score-' + id).className = 'score ok';
+  document.getElementById('ban-' + id).className = 'banner';
+});
+
+document.querySelectorAll('[data-reset]').forEach(btn => btn.onclick = () => {
+  const id = btn.dataset.reset, data = SETS[id];
+  FIELDS[id].forEach((el,i) => {
+    if (data[i].fixed) return;
+    el.value = ''; el.classList.remove('good','bad');
+  });
+  document.getElementById('score-' + id).textContent = '';
+  document.getElementById('ban-' + id).className = 'banner';
+});
+
+/* ====== 5. rédaction ====== */
+const KEY = 'dfpb2-produit-brouillon';
+const dest = document.getElementById('dest'), objet = document.getElementById('objet'),
+      corps = document.getElementById('corps'), mots = document.getElementById('mots'),
+      saved = document.getElementById('saved');
+
+try {
+  const d = JSON.parse(localStorage.getItem(KEY) || '{}');
+  if (d.dest) dest.value = d.dest;
+  if (d.objet) objet.value = d.objet;
+  if (d.corps) corps.value = d.corps;
+} catch(e){}
+
+function count(){
+  const n = corps.value.trim() ? corps.value.trim().split(/\s+/).length : 0;
+  mots.textContent = n + (n === 1 ? ' mot' : ' mots');
+}
+function store(){
+  try {
+    localStorage.setItem(KEY, JSON.stringify({dest:dest.value, objet:objet.value, corps:corps.value}));
+    saved.textContent = 'brouillon enregistré dans ce navigateur';
+  } catch(e){ saved.textContent = ''; }
+}
+[dest,objet,corps].forEach(el => el.addEventListener('input', () => { count(); store(); }));
+count();
+
+document.getElementById('dl').onclick = () => {
+  const txt = 'À : ' + dest.value + '\nObjet : ' + objet.value + '\n\n' + corps.value + '\n';
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([txt], {type:'text/plain;charset=utf-8'}));
+  a.download = 'email-promotionnel.txt';
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+document.getElementById('copy').onclick = async () => {
+  const txt = 'À : ' + dest.value + '\nObjet : ' + objet.value + '\n\n' + corps.value;
+  try { await navigator.clipboard.writeText(txt); saved.textContent = 'texte copié'; }
+  catch(e){ corps.select(); saved.textContent = 'copiez avec Ctrl+C'; }
+};
+document.getElementById('clear').onclick = () => {
+  if (!confirm('Effacer votre brouillon ?')) return;
+  dest.value = objet.value = corps.value = '';
+  try { localStorage.removeItem(KEY); } catch(e){}
+  count(); saved.textContent = '';
+};
+</script>
+</body>
+</html>
