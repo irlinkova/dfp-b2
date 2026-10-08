@@ -38,8 +38,8 @@
 
   section{background:var(--card);border:1px solid var(--line);border-radius:12px;
           margin-bottom:26px;overflow:hidden}
-  .bar{height:3px;background:var(--blue)}
-  .bar.m{background:var(--marsala)}
+  .top{height:3px;background:var(--blue)}
+  .top.m{background:var(--marsala)}
   .head{display:flex;align-items:center;gap:12px;padding:18px 22px 0}
   .step{flex:none;width:30px;height:30px;border-radius:9px;background:var(--blue);color:#fff;
         font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center}
@@ -48,6 +48,10 @@
   .hint{color:var(--grey);font-size:13.5px;padding:8px 22px 14px}
 
   .player{padding:0 22px 18px}
+  .reecoute{margin:0 22px 18px;padding:12px 16px;background:var(--soft);
+            border:1px solid var(--line);border-radius:9px}
+  .reecoute .tag{display:block;font-size:12px;font-weight:700;color:var(--marsala);
+                 letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
   audio{width:100%;max-width:560px;display:block}
   .warn{display:none;margin:10px 0 0;padding:10px 14px;border-radius:8px;
         background:var(--kobg);border:1px solid #F0CBCE;color:var(--ko);font-size:13px}
@@ -123,7 +127,7 @@
 <header>
   <div class="kicker">Français des affaires · B2 · Mise en jeu 2</div>
   <h1>Promouvoir un produit — la fiche technique</h1>
-  <p>Travail en cinq temps. Tout se corrige sur la page, rien n’est envoyé.</p>
+  <p>Travail en trois temps. Tout se corrige sur la page, rien n’est envoyé.</p>
 </header>
 
 <div class="ctx">
@@ -136,27 +140,20 @@
     <ol>
       <li>Écoutez la conversation entre un de vos collègues et une cliente, puis complétez la fiche.</li>
       <li>Notez les besoins de la clientèle.</li>
-      <li>Rédigez un e-mail promotionnel à partir de la fiche et de vos notes.</li>
+      <li>Rédigez un e-mail promotionnel (circuit) en vous basant sur la fiche technique et les besoins de la cliente complétés.</li>
     </ol>
   </div>
 </div>
 
 <!-- 1 -->
 <section>
-  <div class="bar"></div>
-  <div class="head"><span class="step">1</span><h2 class="t">Écoutez la conversation</h2></div>
-  <p class="hint">Première écoute : concentrez-vous sur l’appareil et sur ses caractéristiques.</p>
+  <div class="top"></div>
+  <div class="head"><span class="step">1</span><h2 class="t">Écoutez la conversation et complétez la fiche</h2></div>
+  <p class="hint">Première écoute : concentrez-vous sur l’appareil et sur ses caractéristiques. Une réponse courte suffit ; les accents et les majuscules ne sont pas comptés.</p>
   <div class="player">
     <audio class="au" controls preload="metadata"></audio>
     <div class="warn auwarn">L’enregistrement n’a pas pu être chargé. Vérifiez que le fichier se trouve bien à côté de cette page.</div>
   </div>
-</section>
-
-<!-- 2 -->
-<section>
-  <div class="bar m"></div>
-  <div class="head"><span class="step m">2</span><h2 class="t">Fiche technique</h2></div>
-  <p class="hint">Complétez la fiche. Une réponse courte suffit ; les accents et les majuscules ne sont pas comptés.</p>
   <div class="rows" id="fiche"></div>
   <div class="actions">
     <button class="act" data-check="fiche">Vérifier</button>
@@ -167,22 +164,16 @@
   <div class="banner" id="ban-fiche" style="margin-bottom:18px"></div>
 </section>
 
-<!-- 3 -->
+<!-- 2 -->
 <section>
-  <div class="bar"></div>
-  <div class="head"><span class="step">3</span><h2 class="t">Réécoutez la conversation</h2></div>
-  <p class="hint">Deuxième écoute : cette fois, repérez ce que la cliente veut faire de son ordinateur.</p>
-  <div class="player">
+  <div class="top m"></div>
+  <div class="head"><span class="step m">2</span><h2 class="t">Notez les besoins du client</h2></div>
+  <p class="hint">Ce sont ces besoins que votre e-mail devra satisfaire.</p>
+  <div class="reecoute">
+    <span class="tag">Réécoutez l’enregistrement</span>
     <audio class="au" controls preload="metadata"></audio>
     <div class="warn auwarn">L’enregistrement n’a pas pu être chargé. Vérifiez que le fichier se trouve bien à côté de cette page.</div>
   </div>
-</section>
-
-<!-- 4 -->
-<section>
-  <div class="bar m"></div>
-  <div class="head"><span class="step m">4</span><h2 class="t">Besoins du client</h2></div>
-  <p class="hint">Notez ce que la cliente demande. Ce sont ces besoins que votre e-mail devra satisfaire.</p>
   <div class="rows" id="besoins"></div>
   <div class="actions">
     <button class="act" data-check="besoins">Vérifier</button>
@@ -193,11 +184,11 @@
   <div class="banner" id="ban-besoins" style="margin-bottom:18px"></div>
 </section>
 
-<!-- 5 -->
+<!-- 3 -->
 <section>
   <div class="bar"></div>
-  <div class="head"><span class="step">5</span><h2 class="t">Rédigez l’e-mail promotionnel</h2></div>
-  <p class="hint">Appuyez-vous sur la fiche technique et sur les besoins de la cliente. Votre brouillon reste enregistré dans ce navigateur.</p>
+  <div class="head"><span class="step">3</span><h2 class="t">Rédigez l’e-mail promotionnel</h2></div>
+  <p class="hint">En vous basant sur la fiche technique et les besoins de la cliente complétés. Votre brouillon reste enregistré dans ce navigateur.</p>
   <div class="mail">
     <div class="mailbar">
       <span class="dot" style="background:#E06C75"></span>
