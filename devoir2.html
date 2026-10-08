@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Devoir — Salon INNOBAT · DFP B2</title>
+<style>
+  :root{
+    --ink:#0E2647; --blue:#17457F; --blue2:#2C6AB4; --marsala:#8E2436; --marsala2:#A93344;
+    --line:#D8E4F2; --mist:#EAF1FA; --soft:#F4F8FD; --grey:#5F7A99;
+    --paper:#FAFCFF; --card:#FFFFFF; --note:#FFF8E3; --noteln:#EBD9A8;
+    --ok:#1E7A4C; --okbg:#EAF7F0; --ko:#B3262F; --kobg:#FDF1F2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,"Liberation Sans",Helvetica,sans-serif;color:var(--ink);
+       background:var(--paper);line-height:1.5;padding:0 16px 60px;-webkit-text-size-adjust:100%}
+  .wrap{max-width:1040px;margin:0 auto}
+
+  header{padding:30px 0 18px;border-bottom:2px solid var(--line);margin-bottom:24px}
+  .kicker{display:flex;align-items:center;gap:10px;color:var(--marsala);
+          font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase}
+  .kicker::before{content:"";width:28px;height:2px;background:var(--marsala);flex:none}
+  h1{font-family:Georgia,"Liberation Serif",serif;font-size:30px;margin-top:10px}
+  header p{color:var(--grey);font-size:14px;margin-top:6px}
+
+  .ctx{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:26px}
+  .ctx > div{border-radius:12px;padding:20px 22px;color:#fff}
+  .ctx .sit{background:linear-gradient(100deg,var(--blue),var(--blue2))}
+  .ctx .tache{background:linear-gradient(100deg,var(--marsala),var(--marsala2))}
+  .ctx h2{font-family:Georgia,"Liberation Serif",serif;font-size:19px;margin-bottom:8px}
+  .ctx h2::after{content:"";display:block;width:46px;height:2px;background:#fff;margin-top:7px}
+  .ctx p{font-size:15px}
+
+  .docs{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:26px;align-items:start}
+  .ann{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .ann img{width:100%;display:block;border-radius:6px}
+  .chef{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .chef .bar{height:3px;background:var(--marsala)}
+  .chef .intro{padding:16px 20px 0}
+  .chef .lbl{font-size:9.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--marsala)}
+  .chef .intro p{font-size:13px;color:var(--ink);margin-top:7px}
+  .arrow{text-align:center;color:var(--marsala);font-size:20px;line-height:1;margin:8px 0 2px}
+  .note{margin:0 20px 20px;background:var(--note);border:1px solid var(--noteln);
+        border-left:4px solid var(--marsala);border-radius:8px;padding:16px 18px}
+  .note h3{font-family:Georgia,"Liberation Serif",serif;font-size:18px;margin-bottom:8px}
+  .note h3::after{content:"";display:block;width:110px;height:2px;background:var(--marsala);margin-top:6px}
+  .note .who{font-size:13.5px;font-weight:700;margin-top:4px}
+  .note .addr{font-size:13.5px;color:var(--blue)}
+  .note b.ask{display:block;color:var(--marsala);font-size:13.5px;margin:12px 0 6px}
+  .note ul{list-style:none;font-size:13px}
+  .note li{position:relative;padding-left:16px;margin-bottom:5px}
+  .note li::before{content:"–";position:absolute;left:0;color:var(--marsala);font-weight:700}
+
+  section{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .top{height:3px;background:var(--blue)}
+  h2.t{font-family:Georgia,"Liberation Serif",serif;font-size:19px;padding:18px 22px 0}
+  .hint{color:var(--grey);font-size:13.5px;padding:8px 22px 14px}
+
+  .ids{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 22px 14px}
+  .ids label{display:block;font-size:12px;font-weight:700;color:var(--blue);margin-bottom:4px}
+  .ids input{width:100%;font:inherit;font-size:14.5px;border:1px solid var(--line);
+             background:var(--soft);border-radius:7px;padding:9px 11px;color:var(--ink)}
+  .ids input:focus{outline:none;border-color:var(--blue2);background:#fff}
+
+  .mail{margin:0 22px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+  .mailbar{height:30px;background:var(--mist);border-bottom:1px solid var(--line);
+           display:flex;align-items:center;gap:7px;padding:0 14px}
+  .dot{width:9px;height:9px;border-radius:50%}
+  .mailrow{display:flex;align-items:center;border-bottom:1px solid var(--line)}
+  .mailrow span{flex:none;width:78px;padding-left:18px;font-size:13px;color:var(--grey);font-weight:700}
+  .mailrow input{flex:1 1 auto;font:inherit;font-size:14px;border:none;padding:10px 14px 10px 0;
+                 background:transparent;color:var(--ink)}
+  .mailrow input:focus{outline:none}
+  #corps{width:100%;border:none;padding:14px 18px;font:inherit;font-size:14.5px;line-height:1.6;
+         min-height:300px;resize:vertical;background:transparent;color:var(--ink)}
+  #corps:focus{outline:none}
+  .meta{display:flex;gap:16px;align-items:center;padding:10px 18px;border-top:1px solid var(--line);
+        background:var(--soft);font-size:12.5px;color:var(--grey)}
+
+  .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:18px 22px 22px}
+  button.act{font:inherit;font-size:14px;font-weight:700;border-radius:8px;padding:11px 22px;
+             border:1px solid var(--blue);background:var(--blue);color:#fff;cursor:pointer}
+  button.act:hover{background:var(--blue2);border-color:var(--blue2)}
+  button.act:disabled{opacity:.55;cursor:default}
+  button.act.ghostbtn{background:#fff;color:var(--blue)}
+  button.act.ghostbtn:hover{background:var(--mist)}
+  #status{font-size:13.5px;font-weight:700;margin-left:auto}
+  #status.ok{color:var(--ok)} #status.err{color:var(--ko)} #status.wait{color:var(--grey)}
+  .banner{margin:0 22px 20px;padding:12px 16px;border-radius:9px;font-size:14px;display:none}
+  .banner.show{display:block}
+  .banner.ok{background:var(--okbg);border:1px solid #BFE3D0;color:var(--ok)}
+
+  footer{color:var(--grey);font-size:12.5px;text-align:center;padding-top:22px;margin-top:26px;
+         border-top:1px solid var(--line)}
+  @media (max-width:760px){
+    .ctx,.docs,.ids{grid-template-columns:1fr}
+    h1{font-size:24px}
+    #status{margin-left:0;flex-basis:100%}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">Français des affaires · B2 · Devoir à la maison</div>
+  <h1>Promouvoir une invention au Salon INNOBAT</h1>
+  <p>Durée indicative : 30-40 minutes. Votre brouillon reste enregistré dans ce navigateur.</p>
+</header>
+
+<div class="ctx">
+  <div class="sit">
+    <h2>Situation</h2>
+    <p>Votre équipe a imaginé un objet/service innovant. Votre chef tient à participer au Salon de l’innovation (annonce ci-dessous) cette année et vous a chargé de vous en occuper.</p>
+  </div>
+  <div class="tache">
+    <h2>Votre tâche</h2>
+    <p>Rédigez un courriel promouvant votre invention aux organisateurs du Salon tout en demandant des renseignements.</p>
+  </div>
+</div>
+
+<div class="docs">
+  <div class="ann"><img src="innobat.png" alt="Salon INNOBAT, 8-9 novembre 2026, Parc des Expositions, Halle d’Iraty de Biarritz"></div>
+  <div class="chef">
+    <div class="bar"></div>
+    <div class="intro">
+      <div class="lbl">Ce que votre chef doit savoir</div>
+      <p>Vous avez pris note de l’info dont votre chef a besoin pour prendre la décision définitive sur la participation :</p>
+    </div>
+    <div class="arrow">▼</div>
+    <div class="note">
+      <h3>Salon INNOBAT</h3>
+      <div class="who">Pierre Barroux</div>
+      <div class="addr">accueuil@innobat.fr</div>
+      <b class="ask">À demander :</b>
+      <ul>
+        <li>délais d’inscription ;</li>
+        <li>tarifs par jour pour un stand et espaces disponibles ;</li>
+        <li>si l’équipement nécessaire (TBI, projecteurs, écrans de présentation) est compris.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="top"></div>
+  <h2 class="t">Rédigez votre courriel</h2>
+  <p class="hint">Indiquez d’abord votre nom et votre groupe, puis rédigez le message. C’est la dernière version envoyée qui sera corrigée.</p>
+  <div class="ids">
+    <div><label for="etudiant">Étudiant</label><input id="etudiant" autocomplete="off" placeholder="Nom et prénom"></div>
+    <div><label for="groupe">Groupe</label><input id="groupe" autocomplete="off" placeholder="ex. 4 MEO-29"></div>
+  </div>
+  <div class="mail">
+    <div class="mailbar">
+      <span class="dot" style="background:#E06C75"></span>
+      <span class="dot" style="background:#E5C07B"></span>
+      <span class="dot" style="background:#98C379"></span>
+    </div>
+    <div class="mailrow"><span>À :</span><input id="dest" autocomplete="off" placeholder="accueuil@innobat.fr"></div>
+    <div class="mailrow"><span>Cc / Cci :</span><input id="copie" autocomplete="off" placeholder="(facultatif)"></div>
+    <div class="mailrow"><span>Objet :</span><input id="objet" autocomplete="off" placeholder="…"></div>
+    <textarea id="corps" placeholder="Madame, Monsieur,&#10;&#10;…"></textarea>
+    <div class="meta"><span id="mots">0 mot</span><span id="saved"></span></div>
+  </div>
+  <div class="actions">
+    <button class="act" id="send">Envoyer le devoir</button>
+    <button class="act ghostbtn" id="mailto">Envoyer par courriel</button>
+    <button class="act ghostbtn" id="dl">Télécharger une copie</button>
+    <button class="act ghostbtn" id="clear">Effacer</button>
+    <span id="status"></span>
+  </div>
+  <div class="banner ok" id="done"></div>
+</section>
+
+<footer>Centre de langue française · MGIMO — CCI Paris Île-de-France · Lettres publicitaires, DFP B2</footer>
+</div>
+
+<script>
+/* ========= réglages ========= */
+const PROF_EMAIL = "irlinkova@gmail.com";
+const ENDPOINT   = "https://script.google.com/macros/s/AKfycbwTUuxcEI3KpImOskpRnnRKM316g7qVJLZxkJc0ifT9jIMCv4KEK74aZoXLM1Vn2wpbTQ/exec";
+const DEVOIR     = "INNOBAT";
+const DRAFT      = "dfpb2-devoir-innobat";
+
+const $ = id => document.getElementById(id);
+const FIELDS = ["etudiant","groupe","dest","copie","objet","corps"];
+const values = () => Object.fromEntries(FIELDS.map(f => [f, $(f).value.trim()]));
+const words  = () => { const t = $("corps").value.trim(); return t ? t.split(/\s+/).length : 0; };
+
+try {
+  const d = JSON.parse(localStorage.getItem(DRAFT) || "{}");
+  FIELDS.forEach(f => { if (d[f]) $(f).value = d[f]; });
+} catch (e) {}
+
+function refresh(){
+  const n = words();
+  $("mots").textContent = n + (n === 1 ? " mot" : " mots");
+  try { localStorage.setItem(DRAFT, JSON.stringify(values())); $("saved").textContent = "brouillon enregistré dans ce navigateur"; }
+  catch (e) { $("saved").textContent = ""; }
+}
+FIELDS.forEach(f => $(f).addEventListener("input", refresh));
+refresh();
+
+function setStatus(t, cls){ const s = $("status"); s.textContent = t; s.className = cls || ""; }
+
+function texte(){
+  const v = values();
+  return ["Étudiant : " + (v.etudiant || "—"), "Groupe : " + (v.groupe || "—"), "",
+          "À : " + v.dest, "Cc / Cci : " + v.copie, "Objet : " + v.objet, "", v.corps, ""].join("\n");
+}
+function valide(){
+  const v = values();
+  if (!v.etudiant) { setStatus("Indiquez votre nom avant d’envoyer.", "err"); $("etudiant").focus(); return false; }
+  if (!v.corps)    { setStatus("Le message est vide.", "err"); $("corps").focus(); return false; }
+  return true;
+}
+
+$("dl").onclick = () => {
+  const nom = (values().etudiant || "devoir").replace(/[^\p{L}\d]+/gu, "-").toLowerCase();
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([texte()], {type:"text/plain;charset=utf-8"}));
+  a.download = "devoir-innobat-" + nom + ".txt";
+  a.click(); URL.revokeObjectURL(a.href);
+};
+
+$("mailto").onclick = () => {
+  const v = values();
+  const sujet = "Devoir DFP B2 (INNOBAT) — " + (v.etudiant || "") + (v.groupe ? " (" + v.groupe + ")" : "");
+  location.href = "mailto:" + PROF_EMAIL + "?subject=" + encodeURIComponent(sujet) +
+                  "&body=" + encodeURIComponent(texte());
+};
+
+$("clear").onclick = () => {
+  if (!confirm("Effacer votre brouillon ?")) return;
+  FIELDS.forEach(f => $(f).value = "");
+  try { localStorage.removeItem(DRAFT); } catch (e) {}
+  refresh(); setStatus("");
+};
+
+$("send").onclick = async () => {
+  if (!valide()) return;
+  const btn = $("send");
+  btn.disabled = true;
+  setStatus("Envoi en cours…", "wait");
+  const payload = JSON.stringify(Object.assign({}, values(), {
+    devoir: DEVOIR, envoyeLe: new Date().toISOString(), mots: words()
+  }));
+  try {
+    /* une seule tentative, en no-cors : la réponse est opaque mais la ligne part bien.
+       Pas de seconde tentative — c’est ce qui créait des doublons. */
+    await fetch(ENDPOINT, { method: "POST", mode: "no-cors",
+                            headers: { "Content-Type": "text/plain;charset=utf-8" }, body: payload });
+    setStatus("Devoir envoyé", "ok");
+    const d = $("done");
+    d.textContent = "Votre devoir est parti. Vous pouvez encore le corriger et le renvoyer : c’est la dernière version qui sera lue.";
+    d.classList.add("show");
+  } catch (e) {
+    setStatus("Envoi impossible — utilisez « Envoyer par courriel ».", "err");
+  } finally {
+    btn.disabled = false;
+  }
+};
+</script>
+</body>
+</html>
