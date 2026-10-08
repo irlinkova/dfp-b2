@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Structure et formules du courriel — DFP B2</title>
+<style>
+  :root{
+    --ink:#0E2647; --blue:#17457F; --blue2:#2C6AB4; --marsala:#8E2436;
+    --line:#D8E4F2; --mist:#EAF1FA; --soft:#F4F8FD; --grey:#5F7A99;
+    --paper:#FAFCFF; --card:#FFFFFF;
+    --ok:#1E7A4C; --okbg:#EAF7F0; --ko:#B3262F; --kobg:#FDF1F2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:Arial,"Liberation Sans",Helvetica,sans-serif;
+    color:var(--ink); background:var(--paper);
+    line-height:1.5; padding:0 16px 56px;
+    -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:1100px;margin:0 auto}
+
+  header{padding:30px 0 18px;border-bottom:2px solid var(--line);margin-bottom:26px}
+  .kicker{display:flex;align-items:center;gap:10px;color:var(--marsala);
+          font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase}
+  .kicker::before{content:"";width:28px;height:2px;background:var(--marsala);flex:none}
+  h1{font-family:Georgia,"Liberation Serif",serif;font-size:30px;margin-top:10px;letter-spacing:-.2px}
+  header p{color:var(--grey);font-size:14px;margin-top:6px}
+
+  section{background:var(--card);border:1px solid var(--line);border-radius:12px;
+          padding:0 0 22px;margin-bottom:26px;overflow:hidden}
+  .bar{height:3px;background:var(--blue)}
+  .bar.m{background:var(--marsala)}
+  h2{font-family:Georgia,"Liberation Serif",serif;font-size:19px;padding:18px 22px 0}
+  .hint{color:var(--grey);font-size:13.5px;padding:6px 22px 16px}
+
+  /* ---------- exercice 1 ---------- */
+  ol.sortable{list-style:none;padding:0 22px}
+  li.item{
+    display:flex;align-items:center;gap:12px;
+    background:var(--soft);border:1px solid var(--line);border-left:3px solid var(--blue2);
+    border-radius:8px;padding:11px 14px;margin-bottom:9px;
+    touch-action:none;user-select:none;cursor:grab;
+    transition:box-shadow .12s ease, border-color .12s ease, background .12s ease;
+  }
+  li.item:active{cursor:grabbing}
+  li.item.drag{opacity:.35}
+  li.item.ghost{position:fixed;z-index:50;pointer-events:none;opacity:.96;
+                box-shadow:0 10px 26px rgba(14,38,71,.22);cursor:grabbing;margin:0}
+  .grip{color:#9DB3CC;font-size:17px;line-height:1;letter-spacing:-2px;flex:none}
+  .pos{flex:none;width:26px;height:26px;border-radius:7px;background:var(--blue);color:#fff;
+       font-size:12.5px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .txt{flex:1 1 auto;min-width:0}
+  .txt b{font-size:14.5px}
+  .txt span{display:block;color:var(--grey);font-size:12px;margin-top:2px}
+  .mark{flex:none;width:24px;text-align:center;font-size:17px;font-weight:700;color:transparent}
+  .moves{flex:none;display:flex;flex-direction:column;gap:3px}
+  .moves button{width:24px;height:17px;border:1px solid var(--line);background:#fff;border-radius:5px;
+                color:var(--blue2);font-size:10px;line-height:1;cursor:pointer;padding:0}
+  .moves button:hover{background:var(--mist)}
+
+  li.item.good{background:var(--okbg);border-color:#BFE3D0;border-left-color:var(--ok)}
+  li.item.good .mark{color:var(--ok)}
+  li.item.good .pos{background:var(--ok)}
+  li.item.bad{background:var(--kobg);border-color:#F0CBCE;border-left-color:var(--ko)}
+  li.item.bad .mark{color:var(--ko)}
+  li.item.bad .pos{background:var(--ko)}
+
+  /* ---------- exercice 2 ---------- */
+  .gaps{padding:0 22px}
+  .gap{display:flex;flex-wrap:wrap;align-items:center;gap:6px;
+       padding:12px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+  .gap:last-child{border-bottom:none}
+  .gap .n{flex:none;width:22px;height:22px;border-radius:6px;background:var(--mist);
+          color:var(--blue);font-size:11.5px;font-weight:700;
+          display:flex;align-items:center;justify-content:center}
+  .gap input{
+    font:inherit;font-size:14.5px;color:var(--blue);font-weight:700;
+    border:none;border-bottom:1.5px solid var(--blue2);background:transparent;
+    padding:2px 6px;min-width:190px;max-width:100%;border-radius:3px 3px 0 0;
+  }
+  .gap input:focus{outline:none;background:var(--mist)}
+  .gap input.good{color:var(--ok);border-bottom-color:var(--ok);background:var(--okbg)}
+  .gap input.bad{color:var(--ko);border-bottom-color:var(--ko);background:var(--kobg)}
+  .sol{flex-basis:100%;color:var(--ok);font-size:12.5px;padding-left:28px;display:none}
+  .sol.show{display:block}
+
+  /* ---------- actions ---------- */
+  .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:18px 22px 0}
+  button.act{
+    font:inherit;font-size:14px;font-weight:700;border-radius:8px;padding:10px 20px;
+    border:1px solid var(--blue);background:var(--blue);color:#fff;cursor:pointer;
+  }
+  button.act:hover{background:var(--blue2);border-color:var(--blue2)}
+  button.act.ghostbtn{background:#fff;color:var(--blue);}
+  button.act.ghostbtn:hover{background:var(--mist)}
+  .score{font-size:14px;font-weight:700;color:var(--grey);margin-left:auto}
+  .score.ok{color:var(--ok)}
+  .score.ko{color:var(--ko)}
+  .banner{margin:16px 22px 0;padding:12px 16px;border-radius:9px;font-size:14px;display:none}
+  .banner.show{display:block}
+  .banner.ok{background:var(--okbg);border:1px solid #BFE3D0;color:var(--ok)}
+  .banner.ko{background:var(--kobg);border:1px solid #F0CBCE;color:var(--ko)}
+
+  footer{color:var(--grey);font-size:12.5px;text-align:center;padding-top:10px;
+         border-top:1px solid var(--line)}
+
+  @media (max-width:640px){
+    h1{font-size:24px}
+    .txt span{display:none}
+    .gap input{min-width:140px}
+    .score{margin-left:0;flex-basis:100%}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">Français des affaires · B2 · Rappel</div>
+  <h1>La structure du courriel et les formules</h1>
+  <p>Deux exercices d’échauffement. Tout se corrige sur la page, rien n’est envoyé.</p>
+</header>
+
+<!-- ================= Exercice 1 ================= -->
+<section>
+  <div class="bar"></div>
+  <h2>Exercice 1 · Remettez le courriel dans l’ordre</h2>
+  <p class="hint">Faites glisser les éléments (ou utilisez les flèches) pour les placer de haut en bas dans l’ordre d’un courriel professionnel, puis vérifiez.</p>
+  <ol class="sortable" id="list"></ol>
+  <div class="actions">
+    <button class="act" id="check1">Vérifier</button>
+    <button class="act ghostbtn" id="solve1">Afficher la correction</button>
+    <button class="act ghostbtn" id="reset1">Recommencer</button>
+    <span class="score" id="score1"></span>
+  </div>
+  <div class="banner" id="ban1"></div>
+</section>
+
+<!-- ================= Exercice 2 ================= -->
+<section>
+  <div class="bar m"></div>
+  <h2>Exercice 2 · Complétez les formules</h2>
+  <p class="hint">Un mot (ou un groupe de mots) par trou. Les accents et les majuscules ne sont pas comptés.</p>
+  <div class="gaps" id="gaps"></div>
+  <div class="actions">
+    <button class="act" id="check2">Vérifier</button>
+    <button class="act ghostbtn" id="solve2">Afficher la correction</button>
+    <button class="act ghostbtn" id="reset2">Effacer</button>
+    <span class="score" id="score2"></span>
+  </div>
+  <div class="banner" id="ban2"></div>
+</section>
+
+<footer>Centre de langue française · MGIMO — CCI Paris Île-de-France · Lettres publicitaires, DFP B2</footer>
+</div>
+
+<script>
+/* =============== données =============== */
+const ORDER = [
+  ["Objet", "révélant l’essentiel du contenu"],
+  ["Formule d’appel", "Madame, Monsieur, / Bonjour Madame,…"],
+  ["Corps : contenu principal", "problème, action demandée ou information"],
+  ["Développement", "selon le contenu principal"],
+  ["Conclusion", "selon le cas"],
+  ["Formule finale de politesse", "Cordialement, / Bien cordialement,…"],
+  ["Signature", "Prénom + NOM, fonction, téléphone, fax, adresse e-mail"]
+];
+
+const GAPS = [
+  { before:"Entrée en relation pour la première fois : «", after:", »",
+    sol:["madame monsieur","madame","monsieur","bonjour madame","bonjour monsieur"],
+    show:"Madame, Monsieur, / Madame, / Monsieur, / Bonjour Madame, / Bonjour Monsieur," },
+  { before:"Relations courantes neutres : «", after:", »",
+    sol:["bonjour","bonjour a tous"], show:"Bonjour, / Bonjour à tous," },
+  { before:"Je reste à votre", after:"pour tous renseignements complémentaires.",
+    sol:["disposition","entiere disposition"], show:"disposition" },
+  { before:"Après vérification de…, j’ai", after:"une erreur de…",
+    sol:["constate","remarque","identifie","percu"], show:"constaté (remarqué, identifié, perçu)" },
+  { before:"C’est avec", after:"que je vous informe que…",
+    sol:["plaisir"], show:"plaisir" },
+  { before:"Je vous remercie, par avance, de votre", after:".",
+    sol:["comprehension","efficacite","reponse","confiance","bienveillance"],
+    show:"compréhension / efficacité / réponse / confiance / bienveillance" },
+  { before:"Formule de politesse neutre : «", after:", »",
+    sol:["cordialement","bien cordialement","sinceres salutations","cordiales salutations","salutations"],
+    show:"Cordialement, / Bien cordialement, / Sincères salutations," }
+];
+
+/* =============== exercice 1 =============== */
+const list = document.getElementById('list');
+let items = [];
+
+function shuffled(n){
+  let idx = [...Array(n).keys()];
+  do { for (let i = idx.length - 1; i > 0; i--){ const j = Math.random()*(i+1)|0; [idx[i],idx[j]]=[idx[j],idx[i]]; } }
+  while (idx.every((v,i)=>v===i));
+  return idx;
+}
+
+function buildList(){
+  list.innerHTML = '';
+  items = [];
+  shuffled(ORDER.length).forEach(k => {
+    const li = document.createElement('li');
+    li.className = 'item';
+    li.dataset.k = k;
+    li.innerHTML = '<span class="grip">⋮⋮</span><span class="pos"></span>' +
+      '<span class="txt"><b>' + ORDER[k][0] + '</b><span>' + ORDER[k][1] + '</span></span>' +
+      '<span class="mark"></span>' +
+      '<span class="moves"><button type="button" data-d="-1" aria-label="Monter">▲</button>' +
+      '<button type="button" data-d="1" aria-label="Descendre">▼</button></span>';
+    list.appendChild(li);
+    items.push(li);
+  });
+  renumber();
+  clearMarks();
+}
+
+function renumber(){
+  [...list.children].forEach((li,i) => li.querySelector('.pos').textContent = i + 1);
+}
+function clearMarks(){
+  [...list.children].forEach(li => {
+    li.classList.remove('good','bad');
+    li.querySelector('.mark').textContent = '';
+  });
+  document.getElementById('score1').textContent = '';
+  document.getElementById('score1').className = 'score';
+  document.getElementById('ban1').className = 'banner';
+}
+
+/* --- flèches --- */
+list.addEventListener('click', e => {
+  const b = e.target.closest('button[data-d]');
+  if (!b) return;
+  const li = b.closest('li'), d = +b.dataset.d;
+  const sib = d < 0 ? li.previousElementSibling : li.nextElementSibling;
+  if (!sib) return;
+  d < 0 ? list.insertBefore(li, sib) : list.insertBefore(sib, li);
+  renumber(); clearMarks();
+});
+
+/* --- glisser-déposer (souris + tactile) --- */
+let drag = null;
+list.addEventListener('pointerdown', e => {
+  if (e.button !== undefined && e.button !== 0) return;
+  if (e.target.closest('button')) return;
+  const li = e.target.closest('li.item');
+  if (!li) return;
+  const r = li.getBoundingClientRect();
+  const ghost = li.cloneNode(true);
+  ghost.classList.add('ghost');
+  ghost.style.width = r.width + 'px';
+  ghost.style.left = r.left + 'px';
+  ghost.style.top = r.top + 'px';
+  document.body.appendChild(ghost);
+  li.classList.add('drag');
+  drag = { li, ghost, dx: e.clientX - r.left, dy: e.clientY - r.top };
+  e.preventDefault();
+});
+
+function onMove(e){
+  if (!drag) return;
+  e.preventDefault();
+  drag.ghost.style.left = (e.clientX - drag.dx) + 'px';
+  drag.ghost.style.top  = (e.clientY - drag.dy) + 'px';
+  const kids = [...list.children];
+  let target = null, after = false;
+  for (const li of kids){
+    if (li === drag.li) continue;
+    const r = li.getBoundingClientRect();
+    if (e.clientY >= r.top && e.clientY <= r.bottom){
+      target = li; after = e.clientY > r.top + r.height / 2; break;
+    }
+  }
+  if (!target){
+    const first = kids[0], last = kids[kids.length - 1];
+    if (e.clientY < first.getBoundingClientRect().top){ target = first; after = false; }
+    else if (e.clientY > last.getBoundingClientRect().bottom){ target = last; after = true; }
+  }
+  if (target) {
+    list.insertBefore(drag.li, after ? target.nextElementSibling : target);
+    renumber();
+  }
+}
+
+function endDrag(){
+  if (!drag) return;
+  drag.ghost.remove();
+  drag.li.classList.remove('drag');
+  drag = null;
+  renumber(); clearMarks();
+}
+
+window.addEventListener('pointermove', onMove, { passive:false });
+window.addEventListener('pointerup', endDrag);
+window.addEventListener('pointercancel', endDrag);
+window.addEventListener('blur', endDrag);
+
+document.getElementById('check1').onclick = () => {
+  let ok = 0;
+  [...list.children].forEach((li,i) => {
+    const good = +li.dataset.k === i;
+    li.classList.toggle('good', good);
+    li.classList.toggle('bad', !good);
+    li.querySelector('.mark').textContent = good ? '✓' : '✕';
+    if (good) ok++;
+  });
+  const sc = document.getElementById('score1');
+  sc.textContent = ok + ' / ' + ORDER.length;
+  sc.className = 'score ' + (ok === ORDER.length ? 'ok' : 'ko');
+  const ban = document.getElementById('ban1');
+  if (ok === ORDER.length){
+    ban.className = 'banner ok show';
+    ban.textContent = 'Parfait — c’est exactement la structure d’un courriel professionnel.';
+  } else {
+    ban.className = 'banner ko show';
+    ban.textContent = 'Les éléments en rouge ne sont pas à leur place. Déplacez-les et vérifiez de nouveau.';
+  }
+};
+
+document.getElementById('solve1').onclick = () => {
+  [...list.children]
+    .sort((a,b) => a.dataset.k - b.dataset.k)
+    .forEach(li => list.appendChild(li));
+  renumber();
+  [...list.children].forEach(li => {
+    li.classList.remove('bad'); li.classList.add('good');
+    li.querySelector('.mark').textContent = '✓';
+  });
+  const sc = document.getElementById('score1');
+  sc.textContent = 'correction'; sc.className = 'score ok';
+  const ban = document.getElementById('ban1');
+  ban.className = 'banner ok show';
+  ban.textContent = 'Objet → formule d’appel → contenu principal → développement → conclusion → formule de politesse → signature.';
+};
+
+document.getElementById('reset1').onclick = buildList;
+buildList();
+
+/* =============== exercice 2 =============== */
+const gaps = document.getElementById('gaps');
+const norm = s => s.toLowerCase().trim()
+  .normalize('NFD').replace(/[̀-ͯ]/g,'')
+  .replace(/[«».,;:!?’']/g,' ').replace(/\s+/g,' ').trim();
+
+GAPS.forEach((g,i) => {
+  const d = document.createElement('div');
+  d.className = 'gap';
+  d.innerHTML = '<span class="n">' + (i+1) + '</span><span>' + g.before + '</span>' +
+    '<input type="text" autocomplete="off" spellcheck="false" aria-label="réponse ' + (i+1) + '">' +
+    '<span>' + g.after + '</span>' +
+    '<span class="sol">→ ' + g.show + '</span>';
+  gaps.appendChild(d);
+});
+const inputs = [...gaps.querySelectorAll('input')];
+inputs.forEach(inp => inp.addEventListener('input', () => {
+  inp.classList.remove('good','bad');
+  document.getElementById('ban2').className = 'banner';
+  document.getElementById('score2').textContent = '';
+}));
+
+document.getElementById('check2').onclick = () => {
+  let ok = 0;
+  inputs.forEach((inp,i) => {
+    const good = GAPS[i].sol.includes(norm(inp.value));
+    inp.classList.toggle('good', good);
+    inp.classList.toggle('bad', !good);
+    if (good) ok++;
+  });
+  const sc = document.getElementById('score2');
+  sc.textContent = ok + ' / ' + GAPS.length;
+  sc.className = 'score ' + (ok === GAPS.length ? 'ok' : 'ko');
+  const ban = document.getElementById('ban2');
+  ban.className = 'banner ' + (ok === GAPS.length ? 'ok' : 'ko') + ' show';
+  ban.textContent = ok === GAPS.length
+    ? 'Toutes les formules sont justes.'
+    : 'Les trous en rouge sont à revoir. « Afficher la correction » donne les réponses attendues.';
+};
+
+document.getElementById('solve2').onclick = () => {
+  inputs.forEach((inp,i) => {
+    inp.classList.remove('bad'); inp.classList.add('good');
+    inp.value = GAPS[i].show.split(' / ')[0].replace(/,$/,'');
+    inp.parentElement.querySelector('.sol').classList.add('show');
+  });
+  const sc = document.getElementById('score2');
+  sc.textContent = 'correction'; sc.className = 'score ok';
+  document.getElementById('ban2').className = 'banner';
+};
+
+document.getElementById('reset2').onclick = () => {
+  inputs.forEach(inp => { inp.value = ''; inp.classList.remove('good','bad');
+    inp.parentElement.querySelector('.sol').classList.remove('show'); });
+  document.getElementById('score2').textContent = '';
+  document.getElementById('ban2').className = 'banner';
+};
+</script>
+</body>
+</html>
