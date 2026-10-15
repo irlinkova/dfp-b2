@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exercice 1 · ED DECORATION — DFP B2</title>
+<style>
+  :root{
+    --ink:#0E2647; --blue:#17457F; --blue2:#2C6AB4; --marsala:#8E2436; --marsala2:#A93344;
+    --line:#D8E4F2; --mist:#EAF1FA; --soft:#F4F8FD; --grey:#5F7A99;
+    --paper:#FAFCFF; --card:#FFFFFF;
+    --ok:#1E7A4C; --okbg:#EAF7F0; --ko:#B3262F; --kobg:#FDF1F2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,"Liberation Sans",Helvetica,sans-serif;color:var(--ink);
+       background:var(--paper);line-height:1.5;padding:0 16px 60px;-webkit-text-size-adjust:100%}
+  .wrap{max-width:1040px;margin:0 auto}
+  header{padding:30px 0 18px;border-bottom:2px solid var(--line);margin-bottom:24px}
+  .kicker{display:flex;align-items:center;gap:10px;color:var(--marsala);
+          font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase}
+  .kicker::before{content:"";width:28px;height:2px;background:var(--marsala);flex:none}
+  h1{font-family:Georgia,"Liberation Serif",serif;font-size:30px;margin-top:10px}
+  header p{color:var(--grey);font-size:14px;margin-top:6px}
+
+  .ctx{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px}
+  .ctx > div{border-radius:12px;padding:20px 22px;color:#fff}
+  .ctx .sit{background:linear-gradient(100deg,var(--blue),var(--blue2))}
+  .ctx .tache{background:linear-gradient(100deg,var(--marsala),var(--marsala2))}
+  .ctx h2{font-family:Georgia,"Liberation Serif",serif;font-size:19px;margin-bottom:8px}
+  .ctx h2::after{content:"";display:block;width:46px;height:2px;background:#fff;margin-top:7px}
+  .ctx p{font-size:15px}
+  .ctx ol{list-style:none;counter-reset:t;margin-top:4px}
+  .ctx ol li{counter-increment:t;position:relative;padding-left:30px;margin-top:9px;font-size:14px}
+  .ctx ol li::before{content:counter(t);position:absolute;left:0;top:1px;width:21px;height:21px;
+    border-radius:50%;background:#fff;color:var(--marsala);font-size:11.5px;font-weight:700;
+    display:flex;align-items:center;justify-content:center}
+
+  section{background:var(--card);border:1px solid var(--line);border-radius:12px;
+          margin-bottom:26px;overflow:hidden}
+  .top{height:3px;background:var(--blue)}
+  .top.m{background:var(--marsala)}
+  .head{display:flex;align-items:center;gap:12px;padding:18px 22px 0}
+  .step{flex:none;width:30px;height:30px;border-radius:9px;background:var(--blue);color:#fff;
+        font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .step.m{background:var(--marsala)}
+  h2.t{font-family:Georgia,"Liberation Serif",serif;font-size:19px}
+  .hint{color:var(--grey);font-size:13.5px;padding:8px 22px 14px}
+
+  .player{padding:0 22px 18px}
+  .reecoute{margin:0 22px 18px;padding:12px 16px;background:var(--soft);
+            border:1px solid var(--line);border-radius:9px}
+  .reecoute .tag{display:block;font-size:12px;font-weight:700;color:var(--marsala);
+                 letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+  audio{width:100%;max-width:560px;display:block}
+  .warn{display:none;margin:10px 0 0;padding:10px 14px;border-radius:8px;
+        background:var(--kobg);border:1px solid #F0CBCE;color:var(--ko);font-size:13px}
+  .warn.show{display:block}
+
+  .scan{padding:0 22px 18px}
+  .scan img{width:100%;border:1px solid var(--line);border-radius:10px;background:#fff}
+  .scan figcaption{color:var(--grey);font-size:12.5px;margin-top:7px}
+
+  .memo{margin:0 22px 18px;border:1px solid var(--line);border-left:4px solid #E8C44A;
+        border-radius:10px;background:#FFFDF3;padding:14px 18px}
+  .memo b{display:block;font-family:Georgia,"Liberation Serif",serif;font-size:15px;margin-bottom:8px}
+  .memo li{list-style:none;position:relative;padding-left:16px;margin-top:6px;font-size:14px}
+  .memo li::before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;
+        border-radius:50%;background:var(--marsala)}
+
+  .rows{padding:0 22px}
+  .row{display:flex;align-items:flex-start;gap:14px;padding:9px 0;border-bottom:1px solid var(--line)}
+  .row:last-child{border-bottom:none}
+  .lbl{flex:none;width:230px;font-size:12.5px;font-weight:700;color:var(--blue);
+       background:var(--mist);border-radius:7px;padding:8px 12px}
+  .fld{flex:1 1 auto;min-width:0}
+  .fld input, .fld textarea{
+    width:100%;font:inherit;font-size:14.5px;color:var(--ink);
+    border:1px solid var(--line);background:var(--soft);border-radius:7px;padding:8px 11px}
+  .fld textarea{resize:vertical;min-height:64px;line-height:1.5}
+  .fld input:focus, .fld textarea:focus{outline:none;border-color:var(--blue2);background:#fff}
+  .fld input[readonly]{background:#fff;color:var(--blue2);font-weight:700}
+  .sol{display:none;font-size:12.5px;color:var(--ok);padding-top:5px}
+  .sol.show{display:block}
+
+  .mail{margin:0 22px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+  .mailbar{height:30px;background:var(--mist);border-bottom:1px solid var(--line);
+           display:flex;align-items:center;gap:7px;padding:0 14px}
+  .dot{width:9px;height:9px;border-radius:50%}
+  .mailrow{display:flex;align-items:center;border-bottom:1px solid var(--line)}
+  .mailrow span{flex:none;width:86px;padding:0 0 0 18px;font-size:13px;color:var(--grey);font-weight:700}
+  .mailrow input{flex:1 1 auto;font:inherit;font-size:14px;border:none;padding:10px 14px 10px 0;
+                 background:transparent;color:var(--ink)}
+  .mailrow input:focus{outline:none}
+  .corps{width:100%;border:none;padding:14px 18px;font:inherit;font-size:14.5px;line-height:1.6;
+         min-height:260px;resize:vertical;background:transparent;color:var(--ink)}
+  .corps:focus{outline:none}
+  .meta{display:flex;gap:16px;align-items:center;padding:10px 18px;border-top:1px solid var(--line);
+        background:var(--soft);font-size:12.5px;color:var(--grey)}
+  .ident{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 22px 16px}
+  .ident label{display:block;font-size:12px;font-weight:700;color:var(--grey);margin-bottom:4px}
+  .ident input{width:100%;font:inherit;font-size:14.5px;border:1px solid var(--line);
+               background:var(--soft);border-radius:7px;padding:8px 11px;color:var(--ink)}
+  .ident input:focus{outline:none;border-color:var(--blue2);background:#fff}
+
+  .checklist{margin:16px 22px 0;background:var(--soft);border:1px solid var(--line);
+             border-radius:9px;padding:12px 16px}
+  .checklist b{font-size:13px;color:var(--marsala)}
+  .checklist ul{list-style:none;margin-top:7px;columns:2;column-gap:26px;font-size:13px;color:var(--ink)}
+  .checklist li{padding:2px 0 2px 16px;position:relative;break-inside:avoid}
+  .checklist li::before{content:"\00B7";position:absolute;left:4px;color:var(--marsala);font-weight:700}
+
+  .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:18px 22px 22px}
+  button.act{font:inherit;font-size:14px;font-weight:700;border-radius:8px;padding:10px 20px;
+             border:1px solid var(--blue);background:var(--blue);color:#fff;cursor:pointer}
+  button.act:hover{background:var(--blue2);border-color:var(--blue2)}
+  button.act.ghostbtn{background:#fff;color:var(--blue)}
+  button.act.ghostbtn:hover{background:var(--mist)}
+  #status.ok,.ok-txt{color:var(--ok);font-weight:700;font-size:14px}
+  #status.err{color:var(--ko);font-weight:700;font-size:14px}
+  #status.wait{color:var(--grey);font-size:14px}
+  .banner{margin:0 22px 22px;padding:12px 16px;border-radius:9px;font-size:14px;display:none}
+  .banner.show{display:block}
+  .banner.ok{background:var(--okbg);border:1px solid #BFE3D0;color:var(--ok)}
+  .modele{display:none;margin:0 22px 22px;border:1px solid var(--line);border-radius:10px;
+          background:var(--soft);padding:16px 18px;font-size:14px;line-height:1.6;white-space:pre-wrap}
+  .modele.show{display:block}
+  footer{color:var(--grey);font-size:12.5px;text-align:center;padding-top:10px;border-top:1px solid var(--line)}
+  @media (max-width:760px){
+    .ctx{grid-template-columns:1fr}
+    h1{font-size:24px}
+    .row{flex-direction:column;gap:6px}
+    .lbl{width:100%}
+    .ident{grid-template-columns:1fr}
+    .checklist ul{columns:1}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">Français des affaires · B2 · Exercice 1</div>
+  <h1>Rédigez un courriel — ED DECORATION</h1>
+  <p>Tout se fait sur cette page ; rien n’est envoyé. Votre brouillon reste enregistré dans ce navigateur.</p>
+</header>
+
+<div class="ctx">
+  <div class="sit">
+    <h2>Situation</h2>
+    <p>Vous travaillez chez ED DECORATION, fabricant de tissus français. Votre chef Patrice Beaumier
+       vous a chargé(e) de doubler sa lettre adressée à LEGROMEXPORT d’une copie e-mail.</p>
+  </div>
+  <div class="tache">
+    <h2>Votre tâche</h2>
+    <ol>
+      <li>Lisez la lettre de M. Beaumier.</li>
+      <li>Reprenez-en le contenu dans un courriel : objet, formule d’appel, corps, formule finale, signature.</li>
+      <li>Gardez toutes les conditions chiffrées — rien ne doit disparaître.</li>
+    </ol>
+  </div>
+</div>
+
+<section>
+  <div class="top"></div>
+  <div class="head"><span class="step">1</span><h2 class="t">Lettre de M. Beaumier</h2></div>
+  <p class="hint">Relevez les quatre informations chiffrées : la quantité acceptée, la quantité supplémentaire,
+     le prix proposé et le calendrier de livraison.</p>
+  <figure class="scan">
+    <img src="lettre_eddecoration.png" alt="Lettre d’ED DECORATION à LEGROMEXPORT">
+    <figcaption>ED DECORATION → LEGPROMEXPORT, Chevry-Cossigny, le 6 mars 2004.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="top m"></div>
+  <div class="head"><span class="step m">2</span><h2 class="t">Rédigez un courriel</h2></div>
+  <p class="hint">Les trois en-têtes sont déjà remplis : à vous le corps du message et la signature.</p>
+  <div class="mail">
+    <div class="mailbar"><span class="dot" style="background:#E06C75"></span><span class="dot" style="background:#E5C07B"></span><span class="dot" style="background:#98C379"></span></div>
+    <div class="mailrow"><span>À :</span><input id="dest" autocomplete="off" value="info@legromexport.ru"></div>
+    <div class="mailrow"><span>De :</span><input id="exp" autocomplete="off" value="pbeaumier@eddecor.fr"></div>
+    <div class="mailrow"><span>Objet :</span><input id="objet" autocomplete="off" placeholder="Offre de tissus en…"></div>
+    <textarea class="corps" id="corps" placeholder="Messieurs,&#10;&#10;…"></textarea>
+    <div class="meta"><span id="mots">0 mot</span><span id="saved"></span></div>
+  </div>
+  <div class="checklist">
+    <b>Pensez à :</b>
+    <ul>
+      <li>un objet clair et précis</li>
+      <li>la formule d’appel « Messieurs, »</li>
+      <li>les 300 000 mètres de coton réf. 4745 acceptés</li>
+      <li>les 500 000 mètres supplémentaires demandés</li>
+      <li>la contre-offre : 1,5 € le mètre linéaire EXW, largeur 308 cm</li>
+      <li>la livraison en 3 lots au troisième trimestre</li>
+      <li>la demande de confirmation</li>
+      <li>la signature : nom, fonction, société, téléphone</li>
+    </ul>
+  </div>
+  <div class="actions">
+    <button class="act" id="show">Comparer avec un modèle</button>
+    <button class="act ghostbtn" id="dl">Télécharger une copie</button>
+    <button class="act ghostbtn" id="copy">Copier le texte</button>
+    <button class="act ghostbtn" id="clear">Effacer</button>
+    <span id="status"></span>
+  </div>
+  <div class="modele" id="modele"></div>
+</section>
+
+<footer>Centre de langue française · MGIMO — CCI Paris Île-de-France · L’offre, DFP B2</footer>
+</div>
+<script>
+
+const MODELE = "À : info@legromexport.ru\nDe : pbeaumier@eddecor.fr\nObjet : Offre de tissus en coton et en flanelle\n\nMessieurs,\n\nNous acceptons avec plaisir votre offre de 300 000 mètres de tissus en coton réf. 4745.\n\nPourriez-vous nous signaler si la même qualité vous est disponible ? Nous sommes enclins à vous en acheter 500 000 mètres supplémentaires au cours du deuxième trimestre.\n\nMalheureusement, toutes les conditions concernant les tissus en flanelle ne nous conviennent pas. C’est que le rapport qualité/prix ne nous semble pas assez attrayant. De ce fait, nous voudrions vous faire une contre-offre aux conditions ci-dessous :\n— prix de 1,5 € par mètre linéaire EXW pour la largeur de 308 cm, donc de 20 % en dessous de votre proposition ;\n— livraison en 3 lots au cours du troisième trimestre.\n\nSerait-il possible pour vous de nous envoyer votre confirmation dans les meilleurs délais ?\n\nBien cordialement,\n\nPatrice Beaumier\nDirecteur commercial\nED DECORATION";
+const $ = id => document.getElementById(id);
+const KEY = "dfpb2-offre1";
+const F = ["dest","exp","objet","corps"];
+try { const d = JSON.parse(localStorage.getItem(KEY) || "{}"); F.forEach(f => { if (d[f]) $(f).value = d[f]; }); } catch(e){}
+function refresh(){
+  const t = $("corps").value.trim();
+  const n = t ? t.split(/\s+/).length : 0;
+  $("mots").textContent = n + (n === 1 ? " mot" : " mots");
+  try {
+    localStorage.setItem(KEY, JSON.stringify(Object.fromEntries(F.map(f => [f, $(f).value]))));
+    $("saved").textContent = "brouillon enregistré dans ce navigateur";
+  } catch(e){ $("saved").textContent = ""; }
+}
+F.forEach(f => $(f).addEventListener("input", refresh));
+refresh();
+function texte(){
+  return "À : " + $("dest").value + "\nDe : " + $("exp").value +
+         "\nObjet : " + $("objet").value + "\n\n" + $("corps").value + "\n";
+}
+$("show").onclick = () => {
+  const m = $("modele");
+  if (m.classList.contains("show")) { m.classList.remove("show"); $("show").textContent = "Comparer avec un modèle"; return; }
+  m.textContent = MODELE;
+  m.classList.add("show");
+  $("show").textContent = "Masquer le modèle";
+};
+$("dl").onclick = () => {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([texte()], {type:"text/plain;charset=utf-8"}));
+  a.download = "courriel-ed-decoration.txt"; a.click(); URL.revokeObjectURL(a.href);
+};
+$("copy").onclick = async () => {
+  try { await navigator.clipboard.writeText(texte()); $("status").textContent = "texte copié"; $("status").className = "ok"; }
+  catch(e){ $("corps").select(); $("status").textContent = "copiez avec Ctrl+C"; }
+};
+$("clear").onclick = () => {
+  if (!confirm("Effacer votre brouillon ?")) return;
+  $("objet").value = ""; $("corps").value = "";
+  try { localStorage.removeItem(KEY); } catch(e){}
+  refresh(); $("status").textContent = "";
+};
+
+</script>
+</body>
+</html>

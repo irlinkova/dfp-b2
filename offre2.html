@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exercice 2 · offre et contre-offre — DFP B2</title>
+<style>
+  :root{
+    --ink:#0E2647; --blue:#17457F; --blue2:#2C6AB4; --marsala:#8E2436; --marsala2:#A93344;
+    --line:#D8E4F2; --mist:#EAF1FA; --soft:#F4F8FD; --grey:#5F7A99;
+    --paper:#FAFCFF; --card:#FFFFFF;
+    --ok:#1E7A4C; --okbg:#EAF7F0; --ko:#B3262F; --kobg:#FDF1F2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,"Liberation Sans",Helvetica,sans-serif;color:var(--ink);
+       background:var(--paper);line-height:1.5;padding:0 16px 60px;-webkit-text-size-adjust:100%}
+  .wrap{max-width:1040px;margin:0 auto}
+  header{padding:30px 0 18px;border-bottom:2px solid var(--line);margin-bottom:24px}
+  .kicker{display:flex;align-items:center;gap:10px;color:var(--marsala);
+          font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase}
+  .kicker::before{content:"";width:28px;height:2px;background:var(--marsala);flex:none}
+  h1{font-family:Georgia,"Liberation Serif",serif;font-size:30px;margin-top:10px}
+  header p{color:var(--grey);font-size:14px;margin-top:6px}
+
+  .ctx{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px}
+  .ctx > div{border-radius:12px;padding:20px 22px;color:#fff}
+  .ctx .sit{background:linear-gradient(100deg,var(--blue),var(--blue2))}
+  .ctx .tache{background:linear-gradient(100deg,var(--marsala),var(--marsala2))}
+  .ctx h2{font-family:Georgia,"Liberation Serif",serif;font-size:19px;margin-bottom:8px}
+  .ctx h2::after{content:"";display:block;width:46px;height:2px;background:#fff;margin-top:7px}
+  .ctx p{font-size:15px}
+  .ctx ol{list-style:none;counter-reset:t;margin-top:4px}
+  .ctx ol li{counter-increment:t;position:relative;padding-left:30px;margin-top:9px;font-size:14px}
+  .ctx ol li::before{content:counter(t);position:absolute;left:0;top:1px;width:21px;height:21px;
+    border-radius:50%;background:#fff;color:var(--marsala);font-size:11.5px;font-weight:700;
+    display:flex;align-items:center;justify-content:center}
+
+  section{background:var(--card);border:1px solid var(--line);border-radius:12px;
+          margin-bottom:26px;overflow:hidden}
+  .top{height:3px;background:var(--blue)}
+  .top.m{background:var(--marsala)}
+  .head{display:flex;align-items:center;gap:12px;padding:18px 22px 0}
+  .step{flex:none;width:30px;height:30px;border-radius:9px;background:var(--blue);color:#fff;
+        font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .step.m{background:var(--marsala)}
+  h2.t{font-family:Georgia,"Liberation Serif",serif;font-size:19px}
+  .hint{color:var(--grey);font-size:13.5px;padding:8px 22px 14px}
+
+  .player{padding:0 22px 18px}
+  .reecoute{margin:0 22px 18px;padding:12px 16px;background:var(--soft);
+            border:1px solid var(--line);border-radius:9px}
+  .reecoute .tag{display:block;font-size:12px;font-weight:700;color:var(--marsala);
+                 letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+  audio{width:100%;max-width:560px;display:block}
+  .warn{display:none;margin:10px 0 0;padding:10px 14px;border-radius:8px;
+        background:var(--kobg);border:1px solid #F0CBCE;color:var(--ko);font-size:13px}
+  .warn.show{display:block}
+
+  .scan{padding:0 22px 18px}
+  .scan img{width:100%;border:1px solid var(--line);border-radius:10px;background:#fff}
+  .scan figcaption{color:var(--grey);font-size:12.5px;margin-top:7px}
+
+
+  .sticker{position:relative;margin:4px 34px 26px;background:#FDF4BE;padding:20px 24px 22px;
+           box-shadow:3px 4px 0 rgba(14,38,71,.07);}
+  .sticker::before,.sticker::after{content:"";position:absolute;top:-11px;width:86px;height:24px;
+           background:#F2E7A8;opacity:.95}
+  .sticker::before{left:26px;transform:rotate(-7deg)}
+  .sticker::after{right:26px;transform:rotate(6deg)}
+  .sticker b{display:block;font-family:Georgia,"Liberation Serif",serif;font-size:16px;margin-bottom:4px}
+  .sticker b::after{content:"";display:block;width:44px;height:2px;background:#C9A93A;margin-top:7px}
+  .sticker li{list-style:none;position:relative;padding-left:18px;margin-top:9px;font-size:14px}
+  .sticker li::before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;
+           border-radius:50%;background:var(--marsala)}
+  .sticker .fold{position:absolute;right:0;bottom:0;width:0;height:0;
+           border-left:34px solid transparent;border-bottom:34px solid #F7EA9E}
+  .memo{margin:0 22px 18px;border:1px solid var(--line);border-left:4px solid #E8C44A;
+        border-radius:10px;background:#FFFDF3;padding:14px 18px}
+  .memo b{display:block;font-family:Georgia,"Liberation Serif",serif;font-size:15px;margin-bottom:8px}
+  .memo li{list-style:none;position:relative;padding-left:16px;margin-top:6px;font-size:14px}
+  .memo li::before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;
+        border-radius:50%;background:var(--marsala)}
+
+  .rows{padding:0 22px}
+  .row{display:flex;align-items:flex-start;gap:14px;padding:9px 0;border-bottom:1px solid var(--line)}
+  .row:last-child{border-bottom:none}
+  .lbl{flex:none;width:230px;font-size:12.5px;font-weight:700;color:var(--blue);
+       background:var(--mist);border-radius:7px;padding:8px 12px}
+  .fld{flex:1 1 auto;min-width:0}
+  .fld input, .fld textarea{
+    width:100%;font:inherit;font-size:14.5px;color:var(--ink);
+    border:1px solid var(--line);background:var(--soft);border-radius:7px;padding:8px 11px}
+  .fld textarea{resize:vertical;min-height:64px;line-height:1.5}
+  .fld input:focus, .fld textarea:focus{outline:none;border-color:var(--blue2);background:#fff}
+  .fld input[readonly]{background:#fff;color:var(--blue2);font-weight:700}
+  .sol{display:none;font-size:12.5px;color:var(--ok);padding-top:5px}
+  .sol.show{display:block}
+
+  .mail{margin:0 22px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+  .mailbar{height:30px;background:var(--mist);border-bottom:1px solid var(--line);
+           display:flex;align-items:center;gap:7px;padding:0 14px}
+  .dot{width:9px;height:9px;border-radius:50%}
+  .mailrow{display:flex;align-items:center;border-bottom:1px solid var(--line)}
+  .mailrow span{flex:none;width:86px;padding:0 0 0 18px;font-size:13px;color:var(--grey);font-weight:700}
+  .mailrow input{flex:1 1 auto;font:inherit;font-size:14px;border:none;padding:10px 14px 10px 0;
+                 background:transparent;color:var(--ink)}
+  .mailrow input:focus{outline:none}
+  .corps{width:100%;border:none;padding:14px 18px;font:inherit;font-size:14.5px;line-height:1.6;
+         min-height:260px;resize:vertical;background:transparent;color:var(--ink)}
+  .corps:focus{outline:none}
+  .meta{display:flex;gap:16px;align-items:center;padding:10px 18px;border-top:1px solid var(--line);
+        background:var(--soft);font-size:12.5px;color:var(--grey)}
+  .ident{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 22px 16px}
+  .ident label{display:block;font-size:12px;font-weight:700;color:var(--grey);margin-bottom:4px}
+  .ident input{width:100%;font:inherit;font-size:14.5px;border:1px solid var(--line);
+               background:var(--soft);border-radius:7px;padding:8px 11px;color:var(--ink)}
+  .ident input:focus{outline:none;border-color:var(--blue2);background:#fff}
+
+  .checklist{margin:16px 22px 0;background:var(--soft);border:1px solid var(--line);
+             border-radius:9px;padding:12px 16px}
+  .checklist b{font-size:13px;color:var(--marsala)}
+  .checklist ul{list-style:none;margin-top:7px;columns:2;column-gap:26px;font-size:13px;color:var(--ink)}
+  .checklist li{padding:2px 0 2px 16px;position:relative;break-inside:avoid}
+  .checklist li::before{content:"\00B7";position:absolute;left:4px;color:var(--marsala);font-weight:700}
+
+  .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:18px 22px 22px}
+  button.act{font:inherit;font-size:14px;font-weight:700;border-radius:8px;padding:10px 20px;
+             border:1px solid var(--blue);background:var(--blue);color:#fff;cursor:pointer}
+  button.act:hover{background:var(--blue2);border-color:var(--blue2)}
+  button.act.ghostbtn{background:#fff;color:var(--blue)}
+  button.act.ghostbtn:hover{background:var(--mist)}
+  #status.ok,.ok-txt{color:var(--ok);font-weight:700;font-size:14px}
+  #status.err{color:var(--ko);font-weight:700;font-size:14px}
+  #status.wait{color:var(--grey);font-size:14px}
+  .banner{margin:0 22px 22px;padding:12px 16px;border-radius:9px;font-size:14px;display:none}
+  .banner.show{display:block}
+  .banner.ok{background:var(--okbg);border:1px solid #BFE3D0;color:var(--ok)}
+  .modele{display:none;margin:0 22px 22px;border:1px solid var(--line);border-radius:10px;
+          background:var(--soft);padding:16px 18px;font-size:14px;line-height:1.6;white-space:pre-wrap}
+  .modele.show{display:block}
+  footer{color:var(--grey);font-size:12.5px;text-align:center;padding-top:10px;border-top:1px solid var(--line)}
+  @media (max-width:760px){
+    .ctx{grid-template-columns:1fr}
+    h1{font-size:24px}
+    .row{flex-direction:column;gap:6px}
+    .lbl{width:100%}
+    .ident{grid-template-columns:1fr}
+    .checklist ul{columns:1}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">Français des affaires · B2 · Exercice 2</div>
+  <h1>Rédigez une offre et une contre-offre</h1>
+  <p>Écoute, relevé des conditions, puis rédaction. Tout se fait sur cette page ; rien n’est envoyé.</p>
+</header>
+
+<div class="ctx">
+  <div class="sit">
+    <h2>Situation</h2>
+    <p>M. Vernier (TISSUS FRANCE) et M. Filippov (VITALON) se rencontrent et négocient les conditions
+       d’un marché. Vous écoutez leur conversation.</p>
+  </div>
+  <div class="tache">
+    <h2>Votre tâche</h2>
+    <ol>
+      <li>1<sup>re</sup> écoute : répondez aux cinq questions.</li>
+      <li>2<sup>e</sup> écoute : complétez les conditions du marché éventuel.</li>
+      <li>Rédigez ensuite l’offre, puis la contre-offre.</li>
+    </ol>
+  </div>
+</div>
+
+<section>
+  <div class="top"></div>
+  <div class="head"><span class="step">1</span><h2 class="t">1<sup>re</sup> écoute · Répondez aux questions</h2></div>
+  <p class="hint">Concentrez-vous d’abord sur les personnes : qui parle, pour quelle société, dans quel cadre.</p>
+  <div class="player">
+    <audio class="au" controls preload="metadata"></audio>
+    <div class="warn auwarn">L’enregistrement n’a pas pu être chargé. Vérifiez que le fichier se trouve bien à côté de cette page.</div>
+  </div>
+  <div class="rows" id="questions"></div>
+  <div class="actions"><span class="hint" style="padding:0">Vos réponses restent sur cette page ; elles sont reprises en classe.</span></div>
+</section>
+
+<section>
+  <div class="top m"></div>
+  <div class="head"><span class="step m">2</span><h2 class="t">2<sup>e</sup> écoute · Les conditions du marché éventuel</h2></div>
+  <p class="hint">Ce sont ces conditions que vos deux courriels devront reprendre.</p>
+  <div class="reecoute">
+    <span class="tag">Réécoutez l’enregistrement</span>
+    <audio class="au" controls preload="metadata"></audio>
+    <div class="warn auwarn">L’enregistrement n’a pas pu être chargé. Vérifiez que le fichier se trouve bien à côté de cette page.</div>
+  </div>
+  <div class="rows" id="conditions"></div>
+  <div class="actions"><span class="hint" style="padding:0">Relisez votre tableau avant de rédiger : rien ne doit être inventé.</span></div>
+</section>
+
+<section>
+  <div class="top"></div>
+  <div class="head"><span class="step">3</span><h2 class="t">Rédigez l’offre, puis la contre-offre</h2></div>
+  <p class="hint">Deux rôles successifs. Vos brouillons restent enregistrés dans ce navigateur.</p>
+
+  <div class="sticker">
+    <span class="fold"></span>
+    <b>Mémo de M. Vernier</b>
+    <ul>
+      <li>Rédigez, SVP, la réponse à l’appel d’offre du 02/11/18 par M. Filippov (VITALON).</li>
+      <li>Prix de 9,5 € TTC par 0,15 m en port dû.</li>
+      <li>Conditions de livraison standard (en un seul lot dans les 30–60 jours suivant la commande).</li>
+      <li>Si règlement d’au moins 50 % à la commande, avantages commerciaux sont possibles (à discuter individuellement).</li>
+      <li>Merci</li>
+    </ul>
+  </div>
+
+  <div class="memo" style="border-left-color:#2C6AB4;background:#F4F8FD">
+    <b>A · Secrétaire de M. Vernier — TISSUS FRANCE</b>
+    <ul><li>Restituez l’offre passée par votre chef, compte tenu des instructions laissées sur le mémo ci-dessus.</li></ul>
+  </div>
+  <div class="mail">
+    <div class="mailbar"><span class="dot" style="background:#E06C75"></span><span class="dot" style="background:#E5C07B"></span><span class="dot" style="background:#98C379"></span></div>
+    <div class="mailrow"><span>À :</span><input id="a_dest" autocomplete="off" placeholder="m.filippov@vitalon.ru"></div>
+    <div class="mailrow"><span>Objet :</span><input id="a_objet" autocomplete="off" placeholder="Notre offre du…"></div>
+    <textarea class="corps" id="a_corps" placeholder="Monsieur,&#10;&#10;…"></textarea>
+    <div class="meta"><span id="a_mots">0 mot</span><span id="a_saved"></span></div>
+  </div>
+  <div class="actions">
+    <button class="act ghostbtn" data-dl="a">Télécharger l’offre</button>
+    <button class="act ghostbtn" data-copy="a">Copier</button>
+    <button class="act ghostbtn" data-clear="a">Effacer</button>
+  </div>
+
+  <div class="memo" style="border-left-color:#8E2436;background:#FDF4F5">
+    <b>B · Collaborateur chez VITALON</b>
+    <ul><li>Vous envoyez maintenant la contre-offre à TISSUS FRANCE, suivant les pourparlers que vous venez d’écouter.</li></ul>
+  </div>
+  <div class="mail">
+    <div class="mailbar"><span class="dot" style="background:#E06C75"></span><span class="dot" style="background:#E5C07B"></span><span class="dot" style="background:#98C379"></span></div>
+    <div class="mailrow"><span>À :</span><input id="b_dest" autocomplete="off" placeholder="m.vernier@tissusfrance.fr"></div>
+    <div class="mailrow"><span>Objet :</span><input id="b_objet" autocomplete="off" placeholder="Votre offre du… — notre contre-offre"></div>
+    <textarea class="corps" id="b_corps" placeholder="Monsieur,&#10;&#10;…"></textarea>
+    <div class="meta"><span id="b_mots">0 mot</span><span id="b_saved"></span></div>
+  </div>
+  <div class="checklist">
+    <b>Les deux courriels doivent préciser :</b>
+    <ul>
+      <li>le produit et sa qualité</li>
+      <li>la quantité</li>
+      <li>le prix et la devise</li>
+      <li>les conditions de livraison (incoterm)</li>
+      <li>les délais de livraison</li>
+      <li>le mode et les délais de paiement</li>
+      <li>les avantages commerciaux éventuels</li>
+      <li>le délai de validité de l’offre</li>
+    </ul>
+  </div>
+  <div class="actions">
+    <button class="act ghostbtn" data-dl="b">Télécharger la contre-offre</button>
+    <button class="act ghostbtn" data-copy="b">Copier</button>
+    <button class="act ghostbtn" data-clear="b">Effacer</button>
+    <span id="status"></span>
+  </div>
+</section>
+
+<footer>Centre de langue française · MGIMO — CCI Paris Île-de-France · L’offre, DFP B2</footer>
+</div>
+<script>
+
+const AUDIO = "offre2.mp3";
+document.querySelectorAll("audio.au").forEach((a,i) => {
+  a.src = AUDIO;
+  a.addEventListener("error", () => document.querySelectorAll(".auwarn")[i].classList.add("show"));
+});
+
+const $ = id => document.getElementById(id);
+const QUESTIONS = ["Quelles sont les fonctions de M. Vernier et de M. Filippov ? Quelles sociétés représentent-ils ?", "À quelle occasion se voient-ils ?", "Qui est l’acheteur ?", "Quel produit fait l’objet de leur discussion ?", "Quelles conditions ont convenu à l’acheteur ?"];
+const CONDITIONS = ["Produit", "Qualité · teneur en polyester", "Délais et mode de livraison consentis", "Avantages commerciaux possibles", "Facilité de paiement accordée", "Délais et mode de paiement"];
+
+function build(id, items, key){
+  const box = $(id);
+  items.forEach((lbl,i) => {
+    const row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML = '<div class="lbl">' + (id === "questions" ? (i+1) + ". " : "") + lbl + '</div>' +
+                    '<div class="fld"><textarea id="' + key + i + '" autocomplete="off" spellcheck="false"></textarea></div>';
+    box.appendChild(row);
+  });
+}
+build("questions", QUESTIONS, "q");
+build("conditions", CONDITIONS, "c");
+
+const NOTES = QUESTIONS.map((_,i) => "q" + i).concat(CONDITIONS.map((_,i) => "c" + i));
+const NKEY = "dfpb2-offre2-notes";
+try { const d = JSON.parse(localStorage.getItem(NKEY) || "{}"); NOTES.forEach(k => { if (d[k]) $(k).value = d[k]; }); } catch(e){}
+NOTES.forEach(k => $(k).addEventListener("input", () => {
+  try { localStorage.setItem(NKEY, JSON.stringify(Object.fromEntries(NOTES.map(n => [n, $(n).value])))); } catch(e){}
+}));
+
+const LETTRES = { a: "offre", b: "contre-offre" };
+Object.keys(LETTRES).forEach(k => {
+  const F = [k + "_dest", k + "_objet", k + "_corps"], KEY = "dfpb2-offre2-" + k;
+  try { const d = JSON.parse(localStorage.getItem(KEY) || "{}"); F.forEach(f => { if (d[f]) $(f).value = d[f]; }); } catch(e){}
+  function refresh(){
+    const t = $(k + "_corps").value.trim();
+    const n = t ? t.split(/\s+/).length : 0;
+    $(k + "_mots").textContent = n + (n === 1 ? " mot" : " mots");
+    try {
+      localStorage.setItem(KEY, JSON.stringify(Object.fromEntries(F.map(f => [f, $(f).value]))));
+      $(k + "_saved").textContent = "brouillon enregistré dans ce navigateur";
+    } catch(e){ $(k + "_saved").textContent = ""; }
+  }
+  F.forEach(f => $(f).addEventListener("input", refresh));
+  refresh();
+});
+
+function texte(k){
+  return "À : " + $(k + "_dest").value + "\nObjet : " + $(k + "_objet").value + "\n\n" + $(k + "_corps").value + "\n";
+}
+document.querySelectorAll("[data-dl]").forEach(b => b.onclick = () => {
+  const k = b.dataset.dl;
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([texte(k)], {type:"text/plain;charset=utf-8"}));
+  a.download = LETTRES[k] + ".txt"; a.click(); URL.revokeObjectURL(a.href);
+});
+document.querySelectorAll("[data-copy]").forEach(b => b.onclick = async () => {
+  const k = b.dataset.copy;
+  try { await navigator.clipboard.writeText(texte(k)); $("status").textContent = "texte copié"; $("status").className = "ok"; }
+  catch(e){ $(k + "_corps").select(); $("status").textContent = "copiez avec Ctrl+C"; }
+});
+document.querySelectorAll("[data-clear]").forEach(b => b.onclick = () => {
+  const k = b.dataset.clear;
+  if (!confirm("Effacer ce brouillon ?")) return;
+  [k + "_dest", k + "_objet", k + "_corps"].forEach(f => $(f).value = "");
+  try { localStorage.removeItem("dfpb2-offre2-" + k); } catch(e){}
+  $(k + "_mots").textContent = "0 mot"; $(k + "_saved").textContent = "";
+});
+
+</script>
+</body>
+</html>

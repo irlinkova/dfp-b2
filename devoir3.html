@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Devoir · AGROINTRADE — DFP B2</title>
+<style>
+  :root{
+    --ink:#0E2647; --blue:#17457F; --blue2:#2C6AB4; --marsala:#8E2436; --marsala2:#A93344;
+    --line:#D8E4F2; --mist:#EAF1FA; --soft:#F4F8FD; --grey:#5F7A99;
+    --paper:#FAFCFF; --card:#FFFFFF;
+    --ok:#1E7A4C; --okbg:#EAF7F0; --ko:#B3262F; --kobg:#FDF1F2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,"Liberation Sans",Helvetica,sans-serif;color:var(--ink);
+       background:var(--paper);line-height:1.5;padding:0 16px 60px;-webkit-text-size-adjust:100%}
+  .wrap{max-width:1040px;margin:0 auto}
+  header{padding:30px 0 18px;border-bottom:2px solid var(--line);margin-bottom:24px}
+  .kicker{display:flex;align-items:center;gap:10px;color:var(--marsala);
+          font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase}
+  .kicker::before{content:"";width:28px;height:2px;background:var(--marsala);flex:none}
+  h1{font-family:Georgia,"Liberation Serif",serif;font-size:30px;margin-top:10px}
+  header p{color:var(--grey);font-size:14px;margin-top:6px}
+
+  .ctx{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px}
+  .ctx > div{border-radius:12px;padding:20px 22px;color:#fff}
+  .ctx .sit{background:linear-gradient(100deg,var(--blue),var(--blue2))}
+  .ctx .tache{background:linear-gradient(100deg,var(--marsala),var(--marsala2))}
+  .ctx h2{font-family:Georgia,"Liberation Serif",serif;font-size:19px;margin-bottom:8px}
+  .ctx h2::after{content:"";display:block;width:46px;height:2px;background:#fff;margin-top:7px}
+  .ctx p{font-size:15px}
+  .ctx ol{list-style:none;counter-reset:t;margin-top:4px}
+  .ctx ol li{counter-increment:t;position:relative;padding-left:30px;margin-top:9px;font-size:14px}
+  .ctx ol li::before{content:counter(t);position:absolute;left:0;top:1px;width:21px;height:21px;
+    border-radius:50%;background:#fff;color:var(--marsala);font-size:11.5px;font-weight:700;
+    display:flex;align-items:center;justify-content:center}
+
+  section{background:var(--card);border:1px solid var(--line);border-radius:12px;
+          margin-bottom:26px;overflow:hidden}
+  .top{height:3px;background:var(--blue)}
+  .top.m{background:var(--marsala)}
+  .head{display:flex;align-items:center;gap:12px;padding:18px 22px 0}
+  .step{flex:none;width:30px;height:30px;border-radius:9px;background:var(--blue);color:#fff;
+        font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .step.m{background:var(--marsala)}
+  h2.t{font-family:Georgia,"Liberation Serif",serif;font-size:19px}
+  .hint{color:var(--grey);font-size:13.5px;padding:8px 22px 14px}
+
+  .player{padding:0 22px 18px}
+  .reecoute{margin:0 22px 18px;padding:12px 16px;background:var(--soft);
+            border:1px solid var(--line);border-radius:9px}
+  .reecoute .tag{display:block;font-size:12px;font-weight:700;color:var(--marsala);
+                 letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+  audio{width:100%;max-width:560px;display:block}
+  .warn{display:none;margin:10px 0 0;padding:10px 14px;border-radius:8px;
+        background:var(--kobg);border:1px solid #F0CBCE;color:var(--ko);font-size:13px}
+  .warn.show{display:block}
+
+  .scan{padding:0 22px 18px}
+  .scan img{width:100%;border:1px solid var(--line);border-radius:10px;background:#fff}
+  .scan figcaption{color:var(--grey);font-size:12.5px;margin-top:7px}
+
+  .memo{margin:0 22px 18px;border:1px solid var(--line);border-left:4px solid #E8C44A;
+        border-radius:10px;background:#FFFDF3;padding:14px 18px}
+  .memo b{display:block;font-family:Georgia,"Liberation Serif",serif;font-size:15px;margin-bottom:8px}
+  .memo li{list-style:none;position:relative;padding-left:16px;margin-top:6px;font-size:14px}
+  .memo li::before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;
+        border-radius:50%;background:var(--marsala)}
+
+  .rows{padding:0 22px}
+  .row{display:flex;align-items:flex-start;gap:14px;padding:9px 0;border-bottom:1px solid var(--line)}
+  .row:last-child{border-bottom:none}
+  .lbl{flex:none;width:230px;font-size:12.5px;font-weight:700;color:var(--blue);
+       background:var(--mist);border-radius:7px;padding:8px 12px}
+  .fld{flex:1 1 auto;min-width:0}
+  .fld input, .fld textarea{
+    width:100%;font:inherit;font-size:14.5px;color:var(--ink);
+    border:1px solid var(--line);background:var(--soft);border-radius:7px;padding:8px 11px}
+  .fld textarea{resize:vertical;min-height:64px;line-height:1.5}
+  .fld input:focus, .fld textarea:focus{outline:none;border-color:var(--blue2);background:#fff}
+  .fld input[readonly]{background:#fff;color:var(--blue2);font-weight:700}
+  .sol{display:none;font-size:12.5px;color:var(--ok);padding-top:5px}
+  .sol.show{display:block}
+
+  .mail{margin:0 22px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+  .mailbar{height:30px;background:var(--mist);border-bottom:1px solid var(--line);
+           display:flex;align-items:center;gap:7px;padding:0 14px}
+  .dot{width:9px;height:9px;border-radius:50%}
+  .mailrow{display:flex;align-items:center;border-bottom:1px solid var(--line)}
+  .mailrow span{flex:none;width:86px;padding:0 0 0 18px;font-size:13px;color:var(--grey);font-weight:700}
+  .mailrow input{flex:1 1 auto;font:inherit;font-size:14px;border:none;padding:10px 14px 10px 0;
+                 background:transparent;color:var(--ink)}
+  .mailrow input:focus{outline:none}
+  .corps{width:100%;border:none;padding:14px 18px;font:inherit;font-size:14.5px;line-height:1.6;
+         min-height:260px;resize:vertical;background:transparent;color:var(--ink)}
+  .corps:focus{outline:none}
+  .meta{display:flex;gap:16px;align-items:center;padding:10px 18px;border-top:1px solid var(--line);
+        background:var(--soft);font-size:12.5px;color:var(--grey)}
+  .ident{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 22px 16px}
+  .ident label{display:block;font-size:12px;font-weight:700;color:var(--grey);margin-bottom:4px}
+  .ident input{width:100%;font:inherit;font-size:14.5px;border:1px solid var(--line);
+               background:var(--soft);border-radius:7px;padding:8px 11px;color:var(--ink)}
+  .ident input:focus{outline:none;border-color:var(--blue2);background:#fff}
+
+  .checklist{margin:16px 22px 0;background:var(--soft);border:1px solid var(--line);
+             border-radius:9px;padding:12px 16px}
+  .checklist b{font-size:13px;color:var(--marsala)}
+  .checklist ul{list-style:none;margin-top:7px;columns:2;column-gap:26px;font-size:13px;color:var(--ink)}
+  .checklist li{padding:2px 0 2px 16px;position:relative;break-inside:avoid}
+  .checklist li::before{content:"\00B7";position:absolute;left:4px;color:var(--marsala);font-weight:700}
+
+  .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:18px 22px 22px}
+  button.act{font:inherit;font-size:14px;font-weight:700;border-radius:8px;padding:10px 20px;
+             border:1px solid var(--blue);background:var(--blue);color:#fff;cursor:pointer}
+  button.act:hover{background:var(--blue2);border-color:var(--blue2)}
+  button.act.ghostbtn{background:#fff;color:var(--blue)}
+  button.act.ghostbtn:hover{background:var(--mist)}
+  #status.ok,.ok-txt{color:var(--ok);font-weight:700;font-size:14px}
+  #status.err{color:var(--ko);font-weight:700;font-size:14px}
+  #status.wait{color:var(--grey);font-size:14px}
+  .banner{margin:0 22px 22px;padding:12px 16px;border-radius:9px;font-size:14px;display:none}
+  .banner.show{display:block}
+  .banner.ok{background:var(--okbg);border:1px solid #BFE3D0;color:var(--ok)}
+  .modele{display:none;margin:0 22px 22px;border:1px solid var(--line);border-radius:10px;
+          background:var(--soft);padding:16px 18px;font-size:14px;line-height:1.6;white-space:pre-wrap}
+  .modele.show{display:block}
+  footer{color:var(--grey);font-size:12.5px;text-align:center;padding-top:10px;border-top:1px solid var(--line)}
+  @media (max-width:760px){
+    .ctx{grid-template-columns:1fr}
+    h1{font-size:24px}
+    .row{flex-direction:column;gap:6px}
+    .lbl{width:100%}
+    .ident{grid-template-columns:1fr}
+    .checklist ul{columns:1}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">Français des affaires · B2 · Devoir</div>
+  <h1>Devoir · AGROINTRADE</h1>
+  <p>Rédigez votre courriel dans la fenêtre ci-dessous, puis envoyez-le. Vous pouvez revenir et le corriger :
+     c’est la dernière version envoyée qui sera corrigée.</p>
+</header>
+
+<div class="ctx">
+  <div class="sit">
+    <h2>Situation</h2>
+    <p>Vous êtes assistant(e) du responsable commercial chez AGROINTRADE (Russie). La spécification
+       ci-dessous se rapporte à la livraison effectuée à COMALAIT (France). Vous avez étendu vos relations
+       d’affaires sur le marché français et vous allez faire une offre aux mêmes conditions à votre nouveau
+       partenaire français, dont les coordonnées vous ont été passées par la secrétaire.</p>
+  </div>
+  <div class="tache">
+    <h2>Votre tâche</h2>
+    <ol>
+      <li>Prenez connaissance de la spécification et des coordonnées du nouveau client.</li>
+      <li>Rédigez un courriel comportant l’offre, aux mêmes conditions que la livraison à COMALAIT.</li>
+      <li>Envoyez-le : il arrive directement à l’enseignante.</li>
+    </ol>
+  </div>
+</div>
+
+<section>
+  <div class="top"></div>
+  <div class="head"><span class="step">1</span><h2 class="t">Spécification de chargement</h2></div>
+  <p class="hint">Livraison AGROINTRADE → COMALAIT, spécification n° 187/03, contrat n° 024-05/01.</p>
+  <figure class="scan">
+    <img src="specification.png" alt="Spécification de chargement AGROINTRADE / COMALAIT">
+  </figure>
+</section>
+
+<section>
+  <div class="top m"></div>
+  <div class="head"><span class="step m">2</span><h2 class="t">Données du nouveau marché</h2></div>
+  <p class="hint">Rien d’autre n’est donné : n’inventez ni date limite, ni remise, ni coordonnées.</p>
+  <div class="rows"><div class="row"><div class="lbl">Client</div><div class="fld"><input type="text" value="ООО « Laitgros », 03207 Vichy, France" readonly></div></div><div class="row"><div class="lbl">Interlocuteur</div><div class="fld"><input type="text" value="M. François Leroy, directeur des achats" readonly></div></div><div class="row"><div class="lbl">Téléphone</div><div class="fld"><input type="text" value="+33 6 21 98 67 57" readonly></div></div><div class="row"><div class="lbl">Courriel</div><div class="fld"><input type="text" value="francoisleroy@laitgros.fr" readonly></div></div><div class="row"><div class="lbl">Produit</div><div class="fld"><input type="text" value="lait en poudre non écrémé, réf. 89/76 Stand. 1976" readonly></div></div><div class="row"><div class="lbl">Prix</div><div class="fld"><input type="text" value="2,5 $ / kg" readonly></div></div><div class="row"><div class="lbl">Emballage</div><div class="fld"><input type="text" value="en sacs de 30 kg" readonly></div></div><div class="row"><div class="lbl">Livraison</div><div class="fld"><input type="text" value="transport jusqu’à l’aéroport de Vichy et emballage payés, droits de douane à l’importation non payés" readonly></div></div></div>
+  <div style="height:18px"></div>
+</section>
+
+<section>
+  <div class="top"></div>
+  <div class="head"><span class="step">3</span><h2 class="t">Rédigez et envoyez votre courriel</h2></div>
+  <p class="hint">Indiquez votre nom et votre groupe : c’est ainsi que votre travail sera identifié.</p>
+  <div class="ident">
+    <div><label for="etudiant">Étudiant</label><input id="etudiant" autocomplete="off" placeholder="Nom et prénom"></div>
+    <div><label for="groupe">Groupe</label><input id="groupe" autocomplete="off" placeholder="ex. 4 MEO-29"></div>
+  </div>
+  <div class="mail">
+    <div class="mailbar"><span class="dot" style="background:#E06C75"></span><span class="dot" style="background:#E5C07B"></span><span class="dot" style="background:#98C379"></span></div>
+    <div class="mailrow"><span>À :</span><input id="dest" autocomplete="off" placeholder="francoisleroy@laitgros.fr"></div>
+    <div class="mailrow"><span>Cc / Cci :</span><input id="copie" autocomplete="off" placeholder="(facultatif)"></div>
+    <div class="mailrow"><span>Objet :</span><input id="objet" autocomplete="off" placeholder="…"></div>
+    <textarea class="corps" id="corps" placeholder="Monsieur,&#10;&#10;…"></textarea>
+    <div class="meta"><span id="mots">0 mot</span><span id="saved"></span></div>
+  </div>
+  <div class="checklist">
+    <b>L’offre doit préciser :</b>
+    <ul>
+      <li>le produit et sa référence</li>
+      <li>la qualité</li>
+      <li>la quantité et l’emballage</li>
+      <li>le prix et la devise</li>
+      <li>les conditions de livraison</li>
+      <li>ce qui est payé et ce qui ne l’est pas</li>
+      <li>la demande de confirmation</li>
+      <li>la signature : nom, fonction, AGROINTRADE</li>
+    </ul>
+  </div>
+  <div class="actions">
+    <button class="act" id="send">Envoyer le devoir</button>
+    <button class="act ghostbtn" id="mailto">Envoyer par courriel</button>
+    <button class="act ghostbtn" id="dl">Télécharger une copie</button>
+    <button class="act ghostbtn" id="clear">Effacer</button>
+    <span id="status"></span>
+  </div>
+  <div class="banner ok" id="done"></div>
+</section>
+
+<footer>Centre de langue française · MGIMO — CCI Paris Île-de-France · L’offre, DFP B2</footer>
+</div>
+<script>
+
+const PROF_EMAIL = "irlinkova@gmail.com";
+const ENDPOINT   = "https://script.google.com/macros/s/AKfycbwTUuxcEI3KpImOskpRnnRKM316g7qVJLZxkJc0ifT9jIMCv4KEK74aZoXLM1Vn2wpbTQ/exec";
+const DEVOIR     = "AGROINTRADE";
+const DRAFT      = "dfpb2-devoir-agrointrade";
+
+const $ = id => document.getElementById(id);
+const FIELDS = ["etudiant","groupe","dest","copie","objet","corps"];
+const values = () => Object.fromEntries(FIELDS.map(f => [f, $(f).value.trim()]));
+const words  = () => { const t = $("corps").value.trim(); return t ? t.split(/\s+/).length : 0; };
+
+try { const d = JSON.parse(localStorage.getItem(DRAFT) || "{}"); FIELDS.forEach(f => { if (d[f]) $(f).value = d[f]; }); } catch(e){}
+
+function refresh(){
+  const n = words();
+  $("mots").textContent = n + (n === 1 ? " mot" : " mots");
+  try { localStorage.setItem(DRAFT, JSON.stringify(values())); $("saved").textContent = "brouillon enregistré dans ce navigateur"; }
+  catch(e){ $("saved").textContent = ""; }
+}
+FIELDS.forEach(f => $(f).addEventListener("input", refresh));
+refresh();
+
+function setStatus(t, cls){ const s = $("status"); s.textContent = t; s.className = cls || ""; }
+function texte(){
+  const v = values();
+  return ["Étudiant : " + (v.etudiant || "—"), "Groupe : " + (v.groupe || "—"), "",
+          "À : " + v.dest, "Cc / Cci : " + v.copie, "Objet : " + v.objet, "", v.corps, ""].join("\n");
+}
+function valide(){
+  const v = values();
+  if (!v.etudiant) { setStatus("Indiquez votre nom avant d’envoyer.", "err"); $("etudiant").focus(); return false; }
+  if (!v.corps)    { setStatus("Le message est vide.", "err"); $("corps").focus(); return false; }
+  return true;
+}
+
+$("dl").onclick = () => {
+  const nom = (values().etudiant || "devoir").replace(/[^\p{L}\d]+/gu, "-").toLowerCase();
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([texte()], {type:"text/plain;charset=utf-8"}));
+  a.download = "devoir-agrointrade-" + nom + ".txt";
+  a.click(); URL.revokeObjectURL(a.href);
+};
+$("mailto").onclick = () => {
+  const v = values();
+  const sujet = "Devoir DFP B2 (AGROINTRADE) — " + (v.etudiant || "") + (v.groupe ? " (" + v.groupe + ")" : "");
+  location.href = "mailto:" + PROF_EMAIL + "?subject=" + encodeURIComponent(sujet) + "&body=" + encodeURIComponent(texte());
+};
+$("clear").onclick = () => {
+  if (!confirm("Effacer votre brouillon ?")) return;
+  FIELDS.forEach(f => $(f).value = "");
+  try { localStorage.removeItem(DRAFT); } catch(e){}
+  refresh(); setStatus("");
+};
+$("send").onclick = async () => {
+  if (!valide()) return;
+  const btn = $("send");
+  btn.disabled = true;
+  setStatus("Envoi en cours…", "wait");
+  const payload = JSON.stringify(Object.assign({}, values(), {
+    devoir: DEVOIR, envoyeLe: new Date().toISOString(), mots: words()
+  }));
+  try {
+    await fetch(ENDPOINT, { method: "POST", mode: "no-cors",
+                            headers: { "Content-Type": "text/plain;charset=utf-8" }, body: payload });
+    setStatus("Devoir envoyé", "ok");
+    const d = $("done");
+    d.textContent = "Votre devoir est parti. Vous pouvez encore le corriger et le renvoyer : c’est la dernière version qui sera lue.";
+    d.classList.add("show");
+  } catch(e) {
+    setStatus("Envoi impossible — utilisez « Envoyer par courriel ».", "err");
+  } finally { btn.disabled = false; }
+};
+
+</script>
+</body>
+</html>
