@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exercices 1 et 2 · BEAUTY STAR — DFP B2</title>
+<style>
+  :root{
+    --ink:#0E2647; --blue:#17457F; --blue2:#2C6AB4; --marsala:#8E2436; --marsala2:#A93344;
+    --line:#D8E4F2; --mist:#EAF1FA; --soft:#F4F8FD; --grey:#5F7A99;
+    --paper:#FAFCFF; --card:#FFFFFF;
+    --ok:#1E7A4C; --okbg:#EAF7F0; --ko:#B3262F; --kobg:#FDF1F2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,"Liberation Sans",Helvetica,sans-serif;color:var(--ink);
+       background:var(--paper);line-height:1.5;padding:0 16px 60px;-webkit-text-size-adjust:100%}
+  .wrap{max-width:1040px;margin:0 auto}
+  header{padding:30px 0 18px;border-bottom:2px solid var(--line);margin-bottom:24px}
+  .kicker{display:flex;align-items:center;gap:10px;color:var(--marsala);
+          font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase}
+  .kicker::before{content:"";width:28px;height:2px;background:var(--marsala);flex:none}
+  h1{font-family:Georgia,"Liberation Serif",serif;font-size:30px;margin-top:10px}
+  header p{color:var(--grey);font-size:14px;margin-top:6px}
+
+  .ctx{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px}
+  .ctx > div{border-radius:12px;padding:20px 22px;color:#fff}
+  .ctx .sit{background:linear-gradient(100deg,var(--blue),var(--blue2))}
+  .ctx .tache{background:linear-gradient(100deg,var(--marsala),var(--marsala2))}
+  .ctx h2{font-family:Georgia,"Liberation Serif",serif;font-size:19px;margin-bottom:8px}
+  .ctx h2::after{content:"";display:block;width:46px;height:2px;background:#fff;margin-top:7px}
+  .ctx p{font-size:15px}
+  .ctx ol{list-style:none;counter-reset:t;margin-top:4px}
+  .ctx ol li{counter-increment:t;position:relative;padding-left:30px;margin-top:9px;font-size:14px}
+  .ctx ol li::before{content:counter(t);position:absolute;left:0;top:1px;width:21px;height:21px;
+    border-radius:50%;background:#fff;color:var(--marsala);font-size:11.5px;font-weight:700;
+    display:flex;align-items:center;justify-content:center}
+
+  section{background:var(--card);border:1px solid var(--line);border-radius:12px;
+          margin-bottom:26px;overflow:hidden}
+  .top{height:3px;background:var(--blue)}
+  .top.m{background:var(--marsala)}
+  .head{display:flex;align-items:center;gap:12px;padding:18px 22px 0}
+  .step{flex:none;width:30px;height:30px;border-radius:9px;background:var(--blue);color:#fff;
+        font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .step.m{background:var(--marsala)}
+  h2.t{font-family:Georgia,"Liberation Serif",serif;font-size:19px}
+  .hint{color:var(--grey);font-size:13.5px;padding:8px 22px 14px}
+
+  .player{padding:0 22px 18px}
+  .reecoute{margin:0 22px 18px;padding:12px 16px;background:var(--soft);
+            border:1px solid var(--line);border-radius:9px}
+  .reecoute .tag{display:block;font-size:12px;font-weight:700;color:var(--marsala);
+                 letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+  audio{width:100%;max-width:560px;display:block}
+  .warn{display:none;margin:10px 0 0;padding:10px 14px;border-radius:8px;
+        background:var(--kobg);border:1px solid #F0CBCE;color:var(--ko);font-size:13px}
+  .warn.show{display:block}
+
+  .scan{padding:0 22px 18px}
+  .scan img{width:100%;border:1px solid var(--line);border-radius:10px;background:#fff}
+  .scan a{display:block}
+  .scan figcaption{color:var(--grey);font-size:12.5px;margin-top:7px}
+
+  .memo{margin:0 22px 18px;border:1px solid var(--line);border-left:4px solid #E8C44A;
+        border-radius:10px;background:#FFFDF3;padding:14px 18px}
+  .memo b{display:block;font-family:Georgia,"Liberation Serif",serif;font-size:15px;margin-bottom:8px}
+  .memo li{list-style:none;position:relative;padding-left:16px;margin-top:6px;font-size:14px}
+  .memo li::before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;
+        border-radius:50%;background:var(--marsala)}
+
+  .rows{padding:0 22px}
+  .row{display:flex;align-items:flex-start;gap:14px;padding:9px 0;border-bottom:1px solid var(--line)}
+  .row:last-child{border-bottom:none}
+  .lbl{flex:none;width:230px;font-size:12.5px;font-weight:700;color:var(--blue);
+       background:var(--mist);border-radius:7px;padding:8px 12px}
+  .fld{flex:1 1 auto;min-width:0}
+  .fld input, .fld textarea{
+    width:100%;font:inherit;font-size:14.5px;color:var(--ink);
+    border:1px solid var(--line);background:var(--soft);border-radius:7px;padding:8px 11px}
+  .fld textarea{resize:vertical;min-height:64px;line-height:1.5}
+  .fld input:focus, .fld textarea:focus{outline:none;border-color:var(--blue2);background:#fff}
+  .fld input[readonly]{background:#fff;color:var(--blue2);font-weight:700}
+  .sol{display:none;font-size:12.5px;color:var(--ok);padding-top:5px}
+  .sol.show{display:block}
+
+  .mail{margin:0 22px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+  .mailbar{height:30px;background:var(--mist);border-bottom:1px solid var(--line);
+           display:flex;align-items:center;gap:7px;padding:0 14px}
+  .dot{width:9px;height:9px;border-radius:50%}
+  .mailrow{display:flex;align-items:center;border-bottom:1px solid var(--line)}
+  .mailrow span{flex:none;width:86px;padding:0 0 0 18px;font-size:13px;color:var(--grey);font-weight:700}
+  .mailrow input{flex:1 1 auto;font:inherit;font-size:14px;border:none;padding:10px 14px 10px 0;
+                 background:transparent;color:var(--ink)}
+  .mailrow input:focus{outline:none}
+  .corps{width:100%;border:none;padding:14px 18px;font:inherit;font-size:14.5px;line-height:1.6;
+         min-height:260px;resize:vertical;background:transparent;color:var(--ink)}
+  .corps:focus{outline:none}
+  .meta{display:flex;gap:16px;align-items:center;padding:10px 18px;border-top:1px solid var(--line);
+        background:var(--soft);font-size:12.5px;color:var(--grey)}
+  .ident{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 22px 16px}
+  .ident label{display:block;font-size:12px;font-weight:700;color:var(--grey);margin-bottom:4px}
+  .ident input{width:100%;font:inherit;font-size:14.5px;border:1px solid var(--line);
+               background:var(--soft);border-radius:7px;padding:8px 11px;color:var(--ink)}
+  .ident input:focus{outline:none;border-color:var(--blue2);background:#fff}
+
+  .checklist{margin:16px 22px 0;background:var(--soft);border:1px solid var(--line);
+             border-radius:9px;padding:12px 16px}
+  .checklist b{font-size:13px;color:var(--marsala)}
+  .checklist ul{list-style:none;margin-top:7px;columns:2;column-gap:26px;font-size:13px;color:var(--ink)}
+  .checklist li{padding:2px 0 2px 16px;position:relative;break-inside:avoid}
+  .checklist li::before{content:"\00B7";position:absolute;left:4px;color:var(--marsala);font-weight:700}
+
+  .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:18px 22px 22px}
+  button.act{font:inherit;font-size:14px;font-weight:700;border-radius:8px;padding:10px 20px;
+             border:1px solid var(--blue);background:var(--blue);color:#fff;cursor:pointer}
+  button.act:hover{background:var(--blue2);border-color:var(--blue2)}
+  button.act.ghostbtn{background:#fff;color:var(--blue)}
+  button.act.ghostbtn:hover{background:var(--mist)}
+  #status.ok,.ok-txt{color:var(--ok);font-weight:700;font-size:14px}
+  #status.err{color:var(--ko);font-weight:700;font-size:14px}
+  #status.wait{color:var(--grey);font-size:14px}
+  .banner{margin:0 22px 22px;padding:12px 16px;border-radius:9px;font-size:14px;display:none}
+  .banner.show{display:block}
+  .banner.ok{background:var(--okbg);border:1px solid #BFE3D0;color:var(--ok)}
+  .modele{display:none;margin:0 22px 22px;border:1px solid var(--line);border-radius:10px;
+          background:var(--soft);padding:16px 18px;font-size:14px;line-height:1.6;white-space:pre-wrap}
+  .modele.show{display:block}
+  footer{color:var(--grey);font-size:12.5px;text-align:center;padding-top:10px;border-top:1px solid var(--line)}
+  @media (max-width:760px){
+    .ctx{grid-template-columns:1fr}
+    h1{font-size:24px}
+    .row{flex-direction:column;gap:6px}
+    .lbl{width:100%}
+    .ident{grid-template-columns:1fr}
+    .checklist ul{columns:1}
+  }
+
+  .part{display:flex;align-items:center;gap:12px;margin:38px 0 18px}
+  .part span{font-family:Georgia,"Liberation Serif",serif;font-size:22px;font-weight:700}
+  .part::after{content:"";flex:1 1 auto;height:2px;background:var(--line)}
+  .lettre{margin:0 22px 18px;background:#FFFEFA;border:1px solid #D9D4C7;box-shadow:0 2px 8px rgba(14,38,71,.10);
+          padding:26px 30px;font-family:"Times New Roman","Liberation Serif",serif;font-size:16px;line-height:1.45;color:#1E1E1E}
+  .lettre p{text-align:justify;text-indent:2.2em;margin-top:2px}
+  .lettre .date{text-align:right;text-indent:0;margin-bottom:12px}
+  .lettre .appel{text-align:center;text-indent:0;margin-bottom:4px}
+  .lettre .sign{text-align:right;text-indent:0}
+  .mots{margin:0 22px 22px;display:grid;grid-template-columns:1fr 1fr;gap:6px 26px;font-size:14px}
+  .mots div{padding:5px 0;border-bottom:1px solid var(--line)}
+  .mots span{color:var(--grey)}
+  .cmp{width:calc(100% - 44px);margin:0 22px 8px;border-collapse:collapse;font-size:14px}
+  .cmp th{text-align:left;font-size:12px;color:var(--grey);font-weight:700;padding:6px 8px;border-bottom:2px solid var(--line)}
+  .cmp td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+  .cmp td.l{width:190px;font-weight:700;color:var(--blue);font-size:13px}
+  .cmp td.c{width:34%;color:var(--ink)}
+  .cmp textarea{width:100%;font:inherit;font-size:14px;border:1px solid var(--line);background:var(--soft);
+                border-radius:7px;padding:6px 9px;min-height:40px;resize:vertical;color:var(--ink)}
+  .cmp textarea:focus{outline:none;border-color:var(--blue2);background:#fff}
+  .rep{display:none;margin-top:6px;font-size:13px;line-height:1.45;border-radius:7px;padding:6px 9px}
+  .rep.show{display:block}
+  .rep.ok{background:var(--okbg);color:var(--ok)}
+  .rep.ko{background:var(--kobg);color:var(--ko)}
+  .rep.info{background:var(--mist);color:var(--blue)}
+  .bilan{display:none;margin:12px 22px 22px;padding:12px 16px;border-radius:9px;font-size:14px;border:1px solid var(--line);background:var(--soft)}
+  .bilan.show{display:block}
+  .verdict{margin:12px 22px 0;display:flex;flex-wrap:wrap;gap:18px;align-items:center;font-size:14.5px}
+  .verdict b{color:var(--marsala)}
+  .why{margin:10px 22px 0}
+  .why textarea{width:100%;font:inherit;font-size:14px;border:1px solid var(--line);background:var(--soft);
+                border-radius:7px;padding:8px 11px;min-height:58px;resize:vertical}
+  .corrige{display:none;margin:0 22px 22px;border:1px solid #BFE3D0;border-radius:10px;background:var(--okbg);padding:14px 18px;font-size:14px}
+  .corrige.show{display:block}
+  .corrige ol{padding-left:20px}
+  .corrige li{margin-top:6px}
+  .choix{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 22px 16px}
+  .choix label{display:block;border:2px solid var(--line);border-radius:10px;padding:14px 16px;cursor:pointer;background:#fff}
+  .choix label:hover{border-color:var(--blue2)}
+  .choix input{margin-right:8px}
+  .choix label.on{border-color:var(--blue);background:var(--soft)}
+  .choix label.on.m{border-color:var(--marsala)}
+  .choix b{font-size:15px}
+  .choix p{font-size:13.5px;color:var(--grey);margin-top:6px}
+  .checklist.hide{display:none}
+  @media (max-width:760px){ .mots,.choix{grid-template-columns:1fr} .cmp td.l{width:auto} .lettre{padding:18px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">Français des affaires · B2 · Exercices 1 et 2</div>
+  <h1>La commande — BEAUTY STAR</h1>
+  <p>Tout se fait sur cette page ; rien n’est envoyé. Vos brouillons restent enregistrés dans ce navigateur.</p>
+</header>
+
+<div class="part"><span>Exercice 1 · Rédigez la commande en français</span></div>
+
+<div class="ctx">
+  <div class="sit">
+    <h2>Situation</h2>
+    <p>Vous êtes assistant(e) de la directrice commerciale Anna Zinenko, du centre esthétique BEAUTY STAR à Moscou.
+       Elle a rédigé en russe une lettre de commande de patchs anti-rides et vous demande de l’envoyer en France.</p>
+  </div>
+  <div class="tache">
+    <h2>Votre tâche</h2>
+    <ol>
+      <li>Lisez la lettre de Mme Zinenko ci-dessous.</li>
+      <li>Rédigez-en la version française sous forme de courriel : objet, formule d’appel, corps, formule finale, signature.</li>
+      <li>Gardez toutes les conditions chiffrées — rien ne doit disparaître.</li>
+    </ol>
+  </div>
+</div>
+
+<section>
+  <div class="top"></div>
+  <div class="head"><span class="step">1</span><h2 class="t">La lettre de Mme Zinenko</h2></div>
+  <p class="hint">Relevez les conditions : quantité et référence, prix, remise demandée, livraison, paiement, réponse attendue.</p>
+  <div class="lettre" lang="ru">
+    <p class="date">Москва, 3 марта 2025 г.</p>
+    <p class="appel">Господа!</p>
+    <p>Мы ознакомились с условиями Вашей оферты и готовы передать Вам заказ на 4000 косметических патчей вашей марки артикула PCAR-17. Как было оговорено ранее, цена за 1 патч составляет 4,6 евро, транспортировка включена в цену. В случае, если мы увеличим наш заказ до 5000 штук, мы хотели бы получить скидку в 5 %.</p>
+    <p>Весь товар должен быть поставлен одной партией самое позднее 10 апреля. Товар подлежит оплате банковским переводом. Мы осуществим платеж при получении уведомления о готовности товара к отгрузке.</p>
+    <p>Просим Вас как можно скорее сообщить нам, подходят ли Вам наши условия. В случае положительного ответа мы подтвердим заказ в течение недели.</p>
+    <p>С уважением,</p>
+    <p class="sign">А. Е. Зиненко</p>
+  </div>
+  <div class="mots">
+    <div><span>патч</span> — <b>un patch</b></div>
+    <div><span>артикул</span> — <b>la référence</b></div>
+    <div><span>скидка</span> — <b>une remise</b></div>
+    <div><span>банковский перевод</span> — <b>un virement bancaire</b></div>
+    <div><span>отгрузка</span> — <b>l’expédition</b></div>
+    <div><span>одной партией</span> — <b>en un seul lot</b></div>
+  </div>
+</section>
+
+<section>
+  <div class="top m"></div>
+  <div class="head"><span class="step m">2</span><h2 class="t">Rédigez le courriel</h2></div>
+  <p class="hint">Le destinataire et l’expéditeur sont déjà remplis : à vous l’objet, le message et la signature.</p>
+  <div class="mail">
+    <div class="mailbar"><span class="dot" style="background:#E06C75"></span><span class="dot" style="background:#E5C07B"></span><span class="dot" style="background:#98C379"></span></div>
+    <div class="mailrow"><span>À :</span><input id="adest" autocomplete="off" value="commandes@dermalift.fr" placeholder=""></div>
+    <div class="mailrow"><span>De :</span><input id="aexp" autocomplete="off" value="azinenko@beautystar.ru"></div>
+    <div class="mailrow"><span>Objet :</span><input id="aobjet" autocomplete="off" placeholder="Commande de…"></div>
+    <textarea class="corps" id="acorps" placeholder="Madame,&#10;&#10;…"></textarea>
+    <div class="meta"><span id="amots">0 mot</span><span id="asaved"></span></div>
+  </div>
+  <div class="checklist">
+    <b>Pensez à :</b>
+    <ul>
+      <li>un objet clair et précis</li>
+      <li>la formule d’appel</li>
+      <li>4 000 patchs anti-rides réf. PCAR-17</li>
+      <li>4,6 € l’unité, transport compris</li>
+      <li>la remise de 5 % demandée pour 5 000 pièces</li>
+      <li>un seul lot, le 10 avril au plus tard</li>
+      <li>le virement bancaire à l’avis d’expédition</li>
+      <li>la réponse rapide demandée, la confirmation dans la semaine</li>
+      <li>la signature : nom, fonction, BEAUTY STAR</li>
+    </ul>
+  </div>
+  <div class="actions">
+    <button class="act ghostbtn" id="adl">Télécharger une copie</button>
+    <button class="act ghostbtn" id="acopy">Copier le texte</button>
+    <button class="act ghostbtn" id="aclear">Effacer</button>
+    <span id="astatus"></span>
+  </div>
+</section>
+
+<div class="part"><span>Exercice 2 · La réponse de DERMALIFT</span></div>
+
+<div class="ctx">
+  <div class="sit">
+    <h2>Situation</h2>
+    <p>Mme Zinenko reçoit la réponse de Véronique Meynard, directrice développement : l’ordre est accepté,
+       mais à d’autres conditions.</p>
+  </div>
+  <div class="tache">
+    <h2>Votre tâche</h2>
+    <ol>
+      <li>Comparez : que disait la commande, que dit la confirmation ?</li>
+      <li>Vérifiez les calculs : tout est-il juste ?</li>
+      <li>Décidez, puis rédigez la réponse.</li>
+    </ol>
+  </div>
+</div>
+
+<section>
+  <div class="top"></div>
+  <div class="head"><span class="step">1</span><h2 class="t">La réponse de Véronique Meynard</h2></div>
+  <p class="hint">Lettre de DERMALIFT à Mme Zinenko, Paris, le 7 mars 2025.</p>
+  <figure class="scan">
+    <a href="reponse_dermalift.png" target="_blank" rel="noopener"><img src="reponse_dermalift.png" alt="Lettre de Véronique Meynard, DERMALIFT, à Mme Zinenko, 7 mars 2025"></a>
+    <figcaption>Touchez l’image pour l’ouvrir en grand.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="top m"></div>
+  <div class="head"><span class="step m">2</span><h2 class="t">Les conditions correspondent-elles ?</h2></div>
+  <p class="hint">Pour chaque point, notez ce que dit la confirmation. Faites le calcul du montant vous-même.</p>
+  <table class="cmp">
+    <tr><th></th><th>Ce que disait la commande du 3 mars</th><th>Ce que dit la confirmation du 7 mars</th></tr>
+    <tr><td class="l">Quantité</td><td class="c">4 000 patchs réf. PCAR-17</td><td><textarea id="cf0" placeholder="…"></textarea><div class="rep ok"><b>✓</b> Conforme : 4 000 patchs.</div></td></tr><tr><td class="l">Prix unitaire</td><td class="c">4,6 € en port payé</td><td><textarea id="cf1" placeholder="…"></textarea><div class="rep info"><b>?</b> Le prix unitaire n’est pas indiqué ; il faut le retrouver à partir du montant.</div></td></tr><tr><td class="l">Montant de la commande</td><td class="c">?</td><td><textarea id="cf2" placeholder="…"></textarea><div class="rep ko"><b>✗</b> Écart : 6 465 € + 12 025 € = 18 490 €, alors que 4 000 × 4,60 € = 18 400 €. Et 35 % de 18 400 € font 6 440 €, non 6 465 €.</div></td></tr><tr><td class="l">Remise demandée</td><td class="c">5 % pour 5 000 pièces</td><td><textarea id="cf3" placeholder="…"></textarea><div class="rep ko"><b>✗</b> Écart : 3 % accordés pour 5 000 patchs, au lieu des 5 % demandés.</div></td></tr><tr><td class="l">Paiement</td><td class="c">virement à l’avis d’expédition</td><td><textarea id="cf4" placeholder="…"></textarea><div class="rep ko"><b>✗</b> Écart : acompte de 35 % (6 465 €) à la commande, puis le reste (12 025 €) par virement à l’avis d’expédition.</div></td></tr><tr><td class="l">Délai de livraison</td><td class="c">un seul lot, le 10 avril au plus tard</td><td><textarea id="cf5" placeholder="…"></textarea><div class="rep ko"><b>✗</b> Écart : la confirmation ne dit rien du délai de livraison.</div></td></tr>
+  </table>
+  <div class="verdict"><b>Réponse :</b>
+    <label><input type="radio" name="verdict" value="oui"> a) OUI</label>
+    <label><input type="radio" name="verdict" value="non"> b) NON — pourquoi ?</label>
+  </div>
+  <div class="why"><textarea id="pourquoi" placeholder="Pourquoi ?"></textarea></div>
+  <div class="actions">
+    <button class="act" id="verif">Vérifier mes réponses</button>
+  </div>
+  <div class="bilan" id="bilan"></div>
+</section>
+
+<section>
+  <div class="top"></div>
+  <div class="head"><span class="step">3</span><h2 class="t">Qu’allez-vous faire ?</h2></div>
+  <p class="hint">Choisissez votre décision, puis rédigez le courriel de Mme Zinenko.</p>
+  <div class="choix">
+    <label id="labA"><input type="radio" name="choix" value="A"><b>A · Vous confirmez votre ordre</b>
+      <p>Vous acceptez de donner suite, mais vous signalez l’erreur de calcul et vous revenez sur les points qui ne correspondent pas à votre commande. Vous rédigez la confirmation sous réserves.</p></label>
+    <label id="labB" class="m"><input type="radio" name="choix" value="B"><b>B · Vous retirez votre ordre</b>
+      <p>Les conditions de paiement ne vous conviennent pas. Vous renoncez à la commande, tout en gardant la porte ouverte pour l’avenir. Vous rédigez le retrait de la commande.</p></label>
+  </div>
+  <div class="mail">
+    <div class="mailbar"><span class="dot" style="background:#E06C75"></span><span class="dot" style="background:#E5C07B"></span><span class="dot" style="background:#98C379"></span></div>
+    <div class="mailrow"><span>À :</span><input id="bdest" autocomplete="off" value="commandes@dermalift.fr" placeholder=""></div>
+    <div class="mailrow"><span>De :</span><input id="bexp" autocomplete="off" value="azinenko@beautystar.ru"></div>
+    <div class="mailrow"><span>Objet :</span><input id="bobjet" autocomplete="off" placeholder="…"></div>
+    <textarea class="corps" id="bcorps" placeholder="Madame,&#10;&#10;…"></textarea>
+    <div class="meta"><span id="bmots">0 mot</span><span id="bsaved"></span></div>
+  </div>
+  <div class="checklist hide" id="ckA">
+    <b>Pensez à :</b>
+    <ul>
+      <li>la référence à la lettre du 7 mars</li>
+      <li>votre décision : vous donnez suite à la commande</li>
+      <li>l’erreur de calcul : 18 400 €, acompte de 6 440 €, solde de 11 960 €</li>
+      <li>la remise : 5 % demandés pour 5 000 pièces</li>
+      <li>le mode de paiement prévu dans la commande</li>
+      <li>le délai : un seul lot, le 10 avril au plus tard</li>
+      <li>la demande de confirmation</li>
+      <li>la signature : nom, fonction, BEAUTY STAR</li>
+    </ul>
+  </div>
+  <div class="checklist hide" id="ckB">
+    <b>Pensez à :</b>
+    <ul>
+      <li>la référence à la lettre du 7 mars</li>
+      <li>votre décision : vous retirez la commande</li>
+      <li>la raison : l’acompte de 35 % exigé à la commande</li>
+      <li>la porte reste ouverte pour l’avenir</li>
+      <li>la formule finale du courriel</li>
+      <li>la signature : nom, fonction, BEAUTY STAR</li>
+    </ul>
+  </div>
+  <div class="actions">
+    <button class="act ghostbtn" id="bdl">Télécharger une copie</button>
+    <button class="act ghostbtn" id="bcopy">Copier le texte</button>
+    <button class="act ghostbtn" id="bclear">Effacer</button>
+    <span id="bstatus"></span>
+  </div>
+</section>
+
+<footer>Centre de langue française · MGIMO — CCI Paris Île-de-France · La commande, DFP B2</footer>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const KEY = "dfpb2-commande1";
+const MAIL = ["dest","exp","objet","corps"];
+const ALL = [...MAIL.map(f => "a" + f), ...MAIL.map(f => "b" + f), "cf0","cf1","cf2","cf3","cf4","cf5","pourquoi"];
+let store = {};
+try { store = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(e) {}
+ALL.forEach(f => { if (store[f]) $(f).value = store[f]; });   // un brouillon vide ne remplace pas l’adresse pré-remplie
+function save(){
+  ALL.forEach(f => store[f] = $(f).value);
+  try { localStorage.setItem(KEY, JSON.stringify(store)); return true; } catch(e) { return false; }
+}
+function count(p){
+  const t = $(p + "corps").value.trim(); const n = t ? t.split(/\s+/).length : 0;
+  $(p + "mots").textContent = n + (n === 1 ? " mot" : " mots");
+  $(p + "saved").textContent = save() ? "brouillon enregistré dans ce navigateur" : "";
+}
+["a","b"].forEach(p => { MAIL.forEach(f => $(p + f).addEventListener("input", () => count(p))); count(p); });
+["cf0","cf1","cf2","cf3","cf4","cf5","pourquoi"].forEach(f => $(f).addEventListener("input", save));
+document.querySelectorAll('input[name=verdict]').forEach(r => {
+  if (store.verdict === r.value) r.checked = true;
+  r.addEventListener("change", () => { store.verdict = r.value; save(); });
+});
+function choix(v){
+  $("labA").classList.toggle("on", v === "A"); $("labB").classList.toggle("on", v === "B");
+  $("ckA").classList.toggle("hide", v !== "A"); $("ckB").classList.toggle("hide", v !== "B");
+}
+document.querySelectorAll('input[name=choix]').forEach(r => {
+  if (store.choix === r.value) r.checked = true;
+  r.addEventListener("change", () => { store.choix = r.value; save(); choix(r.value); });
+});
+choix(store.choix);
+function texte(p){
+  return "À : " + $(p + "dest").value + "\nDe : " + $(p + "exp").value + "\nObjet : " + $(p + "objet").value + "\n\n" + $(p + "corps").value + "\n";
+}
+function status(p, t, cls){ const s = $(p + "status"); s.textContent = t; s.className = cls || ""; }
+function wire(p, fichier){
+  $(p + "dl").onclick = () => {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([texte(p)], {type:"text/plain;charset=utf-8"}));
+    a.download = fichier; a.click(); URL.revokeObjectURL(a.href);
+  };
+  $(p + "copy").onclick = async () => {
+    try { await navigator.clipboard.writeText(texte(p)); status(p, "texte copié", "ok"); }
+    catch(e) { $(p + "corps").select(); status(p, "copiez avec Ctrl+C"); }
+  };
+  $(p + "clear").onclick = () => {
+    if (!confirm("Effacer votre brouillon ?")) return;
+    $(p + "objet").value = ""; $(p + "corps").value = "";
+    count(p); status(p, "");
+  };
+}
+wire("a", "commande-beauty-star.txt");
+wire("b", "reponse-dermalift.txt");
+$("verif").onclick = () => {
+  const on = !$("bilan").classList.contains("show");
+  document.querySelectorAll(".rep").forEach(d => d.classList.toggle("show", on));
+  const v = (document.querySelector('input[name=verdict]:checked') || {}).value;
+  const b = $("bilan");
+  b.innerHTML = (v === "non" ? "<b style=\"color:var(--ok)\">✓ Bonne réponse : b) NON.</b> " :
+                 v === "oui" ? "<b style=\"color:var(--ko)\">✗ La bonne réponse est b) NON.</b> " :
+                               "<b>La bonne réponse est b) NON.</b> ") +
+    "La confirmation ne reprend pas les conditions de la commande : quatre écarts — le montant, le mode de paiement, la remise et le délai de livraison. Il faut donc réagir.";
+  b.classList.toggle("show", on);
+  $("verif").textContent = on ? "Masquer les réponses" : "Vérifier mes réponses";
+};
+</script>
+</body>
+</html>
