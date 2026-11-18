@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>Экзамен DFP B2 — преподаватель</title>
+<style>
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#eef1f5;color:#1a1a1a}
+header{background:#1f3a68;color:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+header b{font-size:17px}.clk{font-size:24px;font-weight:bold;font-variant-numeric:tabular-nums}
+main{max-width:980px;margin:18px auto;padding:0 14px}.card{background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.12);padding:16px 20px;margin-bottom:14px}
+button{font-size:15px;padding:9px 16px;border-radius:4px;border:0;cursor:pointer}.go{background:#1d7a35;color:#fff;font-size:17px;padding:12px 24px}
+.sec{background:#e8ebf0}.danger{background:#fbeeee;color:#a12}button:disabled{opacity:.5;cursor:default}
+table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px solid #e2e5ea;padding:7px 8px;text-align:left}th{background:#f4f6f9}
+.on{color:#1d7a35;font-weight:bold}.off{color:#c0272d}.m{color:#1d7a35}.a{color:#b07500}.big{font-size:20px;font-weight:bold}
+.hidden{display:none}input{font-size:15px;padding:8px;border:1px solid #9aa;border-radius:4px}
+</style></head><body>
+<header><b>Экзамен DFP Affaires B2 — панель преподавателя</b><div><span id="ph"></span> <span class="clk" id="clk">--:--</span></div></header>
+<main>
+ <div class="card" id="auth"><p>Пароль панели:</p><input type="password" id="mdp"> <button class="sec" id="ok">Войти</button> <span id="authMsg" class="off"></span></div>
+ <div id="panel" class="hidden">
+  <div class="card"><div class="big" id="sum"></div><p id="help" style="color:#555"></p>
+   <button class="go" id="start">▶ Начать экзамен (45 / 45 / 30 мин)</button>
+   <button class="sec" id="demo">Пробный прогон: учебное задание, 3 / 3 / 2 мин</button>
+   <button class="danger" id="reset">Сбросить</button></div>
+  <div class="card"><table><thead><tr><th>Студент</th><th>Группа</th><th>На связи</th><th>Act. 1</th><th>Act. 2</th><th>Act. 3</th></tr></thead><tbody id="rows"></tbody></table>
+   <p style="font-size:12px;color:#777">✓ — отправлено студентом; ⏱ — отправлено автоматически по окончании времени. Ответы — в таблице «DFP B2 — devoirs»: экзамен на листе «EXAMEN V1», пробный прогон на листе «ESSAI».</p></div>
+ </div>
+</main>
+<script>
+const ENDPOINT = "https://script.google.com/macros/s/AKfycbyt4YaHt73bZTkq1VFvqiw3TME7VlQosoPZmUqhemXxNYwaZQsFDoAeP2yazpMjXaU/exec";
+let mdp = sessionStorage.getItem("mdp") || "", data = null, offset = 0;
+const $ = s => document.querySelector(s);
+const fmt = ms => { ms = Math.max(0, ms); const s = Math.floor(ms/1000), m = Math.floor(s/60), x = s%60; return String(m).padStart(2,"0") + ":" + String(x).padStart(2,"0"); };
+async function call(op, extra){ const u = ENDPOINT + "?" + new URLSearchParams(Object.assign({a: "prof", mdp, op: op || "etat"}, extra || {}));
+  const t0 = Date.now(), j = await (await fetch(u, {cache: "no-store"})).json(); if (j.now) offset = j.now - (t0 + Date.now())/2; return j; }
+async function refresh(op, extra){
+  try { const j = await call(op, extra);
+    if (!j.ok) { if (j.erreur === "mot_de_passe") { $("#authMsg").textContent = "Неверный пароль"; $("#panel").classList.add("hidden"); $("#auth").classList.remove("hidden"); }
+                 else if (j.erreur === "deja_commence") alert("Экзамен уже идёт."); return; }
+    data = j; sessionStorage.setItem("mdp", mdp); $("#auth").classList.add("hidden"); $("#panel").classList.remove("hidden"); draw(); } catch(e) {}
+}
+function draw(){
+  if (!data) return; const t = Date.now() + offset, et = data.etudiants || [];
+  const online = et.filter(e => t - e.vu < 20000).length;
+  let ph = 0, ends = [];
+  if (data.debut) { let x = data.debut; data.durees.forEach(d => { x += d*60000; ends.push(x); }); ph = t < ends[0] ? 1 : t < ends[1] ? 2 : t < ends[2] ? 3 : 4; }
+  $("#start").disabled = $("#demo").disabled = !!data.debut && ph !== 4;
+  if (!data.debut) { $("#sum").textContent = `Подключились: ${et.length} · на связи сейчас: ${online}`; $("#help").textContent = "Студенты видят экран ожидания. Когда все на месте — нажмите «Начать экзамен»."; $("#ph").textContent = "ожидание"; $("#clk").textContent = "--:--"; }
+  else if (ph < 4) { const r = [1,2,3].map(a => et.filter(e => e.rendus[a]).length);
+    $("#sum").textContent = `Идёт часть ${ph} · сдали: Act.1 ${r[0]}/${et.length} · Act.2 ${r[1]}/${et.length} · Act.3 ${r[2]}/${et.length}`;
+    $("#help").textContent = `Части сменяются автоматически. До конца экзамена: ${fmt(ends[2] - t)}.`; $("#ph").textContent = (data.mode === "essai" ? "ПРОБНЫЙ ПРОГОН · " : "ЭКЗАМЕН · ") + "часть " + ph + " · осталось"; $("#clk").textContent = fmt(ends[ph-1] - t); }
+  else { $("#sum").textContent = "Экзамен завершён"; $("#help").textContent = data.ferme ? "Задания больше недоступны." : "Через 15 минут после конца задания станут недоступны."; $("#ph").textContent = ""; $("#clk").textContent = "00:00"; }
+  const cell = r => r ? (r.auto ? '<span class="a">⏱ ' : '<span class="m">✓ ') + new Date(r.t).toLocaleTimeString("ru-RU", {hour: "2-digit", minute: "2-digit"}) + "</span>" : "—";
+  $("#rows").innerHTML = et.map(e => `<tr><td>${esc(e.nom)}</td><td>${esc(e.groupe)}</td><td class="${t - e.vu < 20000 ? "on" : "off"}">${t - e.vu < 20000 ? "●" : "○ " + (e.vu ? fmt(t - e.vu) + " назад" : "")}</td><td>${cell(e.rendus[1])}</td><td>${cell(e.rendus[2])}</td><td>${cell(e.rendus[3])}</td></tr>`).join("");
+}
+const esc = s => String(s || "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+$("#ok").onclick = () => { mdp = $("#mdp").value; refresh(); };
+$("#mdp").addEventListener("keydown", e => { if (e.key === "Enter") $("#ok").click(); });
+$("#start").onclick = () => { if (confirm("Начать экзамен для всех сейчас? Отменить будет нельзя.")) refresh("demarrer"); };
+$("#demo").onclick = () => { if (confirm("Запустить пробный прогон с учебным заданием (не экзамен), 3/3/2 мин?")) refresh("demarrer", {demo: "1"}); };
+$("#reset").onclick = () => { if (confirm("Сбросить всё: старт, список студентов, отметки о сдаче? (ответы в таблице останутся)")) refresh("reinitialiser"); };
+if (mdp) refresh();
+setInterval(() => { if (mdp) refresh(); }, 5000); setInterval(draw, 1000);
+</script></body></html>
