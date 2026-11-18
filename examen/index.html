@@ -156,7 +156,8 @@ async function api(params){
   if (j.now) offset = j.now - (t0 + t1) / 2;
   return j;
 }
-function show(id){ ["login","waiting","exam","between","fin","closed"].forEach(x => $("#" + x).classList.toggle("hidden", x !== id)); }
+function show(id){ ["login","waiting","exam","between","fin","closed"].forEach(x => $("#" + x).classList.toggle("hidden", x !== id));
+  if (["between","fin","closed"].includes(id) && loaded) { $("#docs").innerHTML = ""; $("#answer").innerHTML = ""; loaded = 0; } }   // partie rendue ou examen fini : effacer le sujet de la page
 function toast(m){ const t = $("#toast"); t.textContent = m; t.style.display = "block"; clearTimeout(toast.h); toast.h = setTimeout(() => t.style.display = "none", 6000); }
 function watermark(){ if (!st.etudiant) return; const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="460" height="230"><text x="230" y="120" text-anchor="middle" transform="rotate(-22 230 115)" font-family="Arial" font-size="17" fill="#1f3a68">${esc(st.etudiant + " · " + st.groupe)}</text></svg>`;
