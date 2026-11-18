@@ -127,7 +127,7 @@ button.main:disabled{background:#8a97ab;cursor:default}
   <div class="card answer" id="answer"></div></div></section>
  <section class="card hidden" id="between"><h2 style="color:var(--b);margin-top:0">Réponse envoyée</h2><p id="betweenTxt"></p></section>
  <section class="card hidden" id="fin"><h2 style="color:var(--b);margin-top:0">L'examen est terminé</h2><p>Toutes vos réponses ont été enregistrées. Merci ! Vous pouvez fermer cette page.</p></section>
- <section class="card hidden" id="closed"><h2 style="color:var(--b);margin-top:0">L'examen est fermé</h2><p>Cette page n'est plus active.</p></section>
+ <section class="card hidden" id="closed"><h2 style="color:var(--b);margin-top:0">L'examen est terminé</h2><p>Il n'est plus possible d'y participer. Cette page n'est plus active.</p></section>
 </main>
 <script>
 const ENDPOINT = "https://script.google.com/macros/s/AKfycbyt4YaHt73bZTkq1VFvqiw3TME7VlQosoPZmUqhemXxNYwaZQsFDoAeP2yazpMjXaU/exec";
@@ -173,7 +173,9 @@ $("#enter").onclick = async () => {
   const e = $("#etudiant").value.trim(), g = $("#groupe").value.trim(), m = $("#loginMsg");
   if (!e || !g) { m.textContent = "Indiquez votre prénom, votre nom et votre groupe."; m.classList.remove("hidden"); return; }
   $("#enter").disabled = true;
-  try { const j = await api({a: "entrer", nom: e, groupe: g}); if (!j.ok) throw 0;
+  try { const s = await api({a: "etat"});
+        if (s.ok && s.debut && (s.partie === 4 || s.ferme)) { st.missedDebut = s.debut; save(); srv = s; show("closed"); $("#enter").disabled = false; return; }
+        const j = await api({a: "entrer", nom: e, groupe: g}); if (!j.ok) throw 0;
         st.etudiant = e; st.groupe = g; st.entered = true; save(); watermark(); srv = j; tick(); }
   catch(err) { m.textContent = "Connexion impossible. Vérifiez votre connexion Internet et réessayez."; m.classList.remove("hidden"); }
   $("#enter").disabled = false;
@@ -268,14 +270,26 @@ async function flushLoop(){
 
 /* ---------- boucle ---------- */
 let lastSync = 0;
-async function sync(){ try { const j = await api({a: "etat"}); if (j.ok) { if (j.debut && st.debutRef !== j.debut) { if (st.debutRef) { st.sent = {}; st.drafts = {}; st.labels = {}; st.log = {paste:0, copy:0, blur:0}; loaded = 0; } st.debutRef = j.debut; save(); } srv = j; if (!j.debut) { loaded = 0; }
-  $("#modeLbl").textContent = j.mode === "essai" ? "ESSAI TECHNIQUE" : "Examen blanc"; } } catch(e) {} lastSync = Date.now(); }
+let lastJoin = 0;
+async function join(){ if (!st.entered) return; try { await api({a: "entrer", nom: st.etudiant, groupe: st.groupe}); } catch(e) {} lastJoin = Date.now(); }
+async function sync(){ try { const j = await api({a: "etat"}); if (j.ok) {
+    if (j.debut && st.debutRef !== j.debut) {
+      if (j.partie === 4 || j.ferme) st.missedDebut = j.debut;                 // examen déjà fini quand on le découvre
+      if (st.debutRef) { st.sent = {}; st.drafts = {}; st.labels = {}; st.log = {paste:0, copy:0, blur:0}; loaded = 0; }
+      st.debutRef = j.debut; save();
+    }
+    const wasRunning = srv && srv.debut; srv = j;
+    if (!j.debut) { loaded = 0; if (wasRunning || Date.now() - lastJoin > 60000) join(); }   // après « Сбросить » : se réinscrire
+    $("#modeLbl").textContent = j.mode === "essai" ? "ESSAI TECHNIQUE" : "Examen blanc"; } } catch(e) {} lastSync = Date.now(); }
 async function tick(){
-  if (!st.entered) { show("login"); return; }
+  if (!st.entered) {                                     // pas encore connecté : afficher « terminé » si l'examen est fini
+    if (Date.now() - lastSync > 10000) await sync();
+    const over = srv && srv.debut && (srv.ferme || srv.partie === 4 || st.missedDebut === srv.debut);
+    show(over ? "closed" : "login"); return; }
   const waitingStart = !srv || !srv.debut;
-  if (Date.now() - lastSync > (waitingStart ? 3000 : 30000)) await sync();
+  if (Date.now() - lastSync > (waitingStart || phase() === 4 ? 3000 : 30000)) await sync();   // après la fin : vérifier souvent (Сбросить / nouveau lancement)
   if (!srv) return;
-  if (srv.ferme) { show("closed"); return; }
+  if (srv.ferme || (srv.debut && st.missedDebut === srv.debut)) { show("closed"); return; }
   const ph = phase(), B = bounds();
   $$("#steps span").forEach(s => { const k = +s.dataset.k; s.className = k === ph ? "on" : (k < ph ? "done" : ""); });
   if (ph === 0) { show("waiting"); $("#whoami").textContent = st.etudiant + " · " + st.groupe; $("#clkBig").textContent = "--:--"; $("#clkSmall").textContent = "en attente"; return; }
@@ -290,6 +304,6 @@ async function tick(){
   if (loaded !== ph) { show("waiting"); await loadAct(ph); }
   if (loaded === ph) show("exam");
 }
-watermark(); flush();
+watermark(); flush(); join();
 setInterval(tick, 1000); tick();
 </script></body></html>
