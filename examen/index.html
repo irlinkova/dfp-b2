@@ -193,7 +193,7 @@ async function loadAct(a){
   if (loading) return; loading = true;
   try {
     const j = await api({a: "contenu", act: a});
-    if (!j.ok) { loading = false; return; }                 // réessai à la seconde suivante
+    if (!j.ok) { if (j.erreur === "inconnu") await join(); loading = false; return; }   // réessai à la seconde suivante (après réinscription si besoin)
     const c = j.contenu; loaded = a;
     $("#docs").innerHTML = c.docs;
     let h = `<h3>${c.titre} <span>${c.limite}</span></h3>`;
@@ -211,7 +211,7 @@ async function loadAct(a){
 }
 async function loadAudio(){
   for (let k = 0; k < 5; k++) {
-    try { const j = await api({a: "audio"}); if (j.ok) {
+    try { const j = await api({a: "audio"}); if (!j.ok && j.erreur === "inconnu") await join(); if (j.ok) {
         const bin = atob(j.b64), u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
         const url = URL.createObjectURL(new Blob([u8], {type: j.type}));
         $("#audioZone").innerHTML = `<audio controls preload="auto" src="${url}" controlsList="nodownload"></audio><div class="hint">Vous pouvez réécouter le document autant de fois que vous le souhaitez.</div>`;
