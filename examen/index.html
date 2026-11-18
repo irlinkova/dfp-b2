@@ -136,7 +136,8 @@ const CHARS = ["é","è","ê","ë","à","â","ç","ù","û","ô","î","ï","œ",
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 let st; try { st = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) { st = {}; }
 st.drafts = st.drafts || {}; st.sent = st.sent || {}; st.log = st.log || {paste:0, copy:0, blur:0}; st.outbox = st.outbox || [];
-if (!st.eid) st.eid = Math.random().toString(36).slice(2) + Date.now().toString(36);
+const newId = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
+if (!st.eid) st.eid = newId();
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch(e){} };
 save();
 
@@ -272,14 +273,18 @@ async function flushLoop(){
 let lastSync = 0;
 let lastJoin = 0;
 async function join(){ if (!st.entered) return; try { await api({a: "entrer", nom: st.etudiant, groupe: st.groupe}); } catch(e) {} lastJoin = Date.now(); }
+function logout(){                                     // session terminée et réinitialisée : la place est libre pour un autre étudiant
+  st = {eid: newId(), drafts: {}, sent: {}, log: {paste:0, copy:0, blur:0}, outbox: st.outbox || []}; save(); loaded = 0;
+  $("#etudiant").value = ""; $("#groupe").value = ""; $("#loginMsg").classList.add("hidden");
+  document.documentElement.style.removeProperty("--wm"); $("#docs").innerHTML = ""; $("#answer").innerHTML = ""; }
 async function sync(){ try { const j = await api({a: "etat"}); if (j.ok) {
+    if (st.entered && st.debutRef && j.debut !== st.debutRef) logout();      // « Сбросить » (ou nouvelle session) après la session de cet étudiant
     if (j.debut && st.debutRef !== j.debut) {
-      if (j.partie === 4 || j.ferme) st.missedDebut = j.debut;                 // examen déjà fini quand on le découvre
-      if (st.debutRef) { st.sent = {}; st.drafts = {}; st.labels = {}; st.log = {paste:0, copy:0, blur:0}; loaded = 0; }
+      if (!st.entered && (j.partie === 4 || j.ferme)) st.missedDebut = j.debut;   // examen déjà fini quand on le découvre
       st.debutRef = j.debut; save();
     }
-    const wasRunning = srv && srv.debut; srv = j;
-    if (!j.debut) { loaded = 0; if (wasRunning || Date.now() - lastJoin > 60000) join(); }   // après « Сбросить » : se réinscrire
+    srv = j;
+    if (!j.debut) { loaded = 0; if (Date.now() - lastJoin > 30000) join(); }    // en attente : rester inscrit
     $("#modeLbl").textContent = j.mode === "essai" ? "ESSAI TECHNIQUE" : "Examen blanc"; } } catch(e) {} lastSync = Date.now(); }
 async function tick(){
   if (!st.entered) {                                     // pas encore connecté : afficher « terminé » si l'examen est fini

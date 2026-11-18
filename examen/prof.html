@@ -42,12 +42,12 @@ function draw(){
   const online = et.filter(e => t - e.vu < 20000).length;
   let ph = 0, ends = [];
   if (data.debut) { let x = data.debut; data.durees.forEach(d => { x += d*60000; ends.push(x); }); ph = t < ends[0] ? 1 : t < ends[1] ? 2 : t < ends[2] ? 3 : 4; }
-  $("#start").disabled = $("#demo").disabled = !!data.debut && ph !== 4;
+  $("#start").disabled = $("#demo").disabled = !!data.debut;
   if (!data.debut) { $("#sum").textContent = `Подключились: ${et.length} · на связи сейчас: ${online}`; $("#help").textContent = "Студенты видят экран ожидания. Когда все на месте — нажмите «Начать экзамен»."; $("#ph").textContent = "ожидание"; $("#clk").textContent = "--:--"; }
   else if (ph < 4) { const r = [1,2,3].map(a => et.filter(e => e.rendus[a]).length);
     $("#sum").textContent = `Идёт часть ${ph} · сдали: Act.1 ${r[0]}/${et.length} · Act.2 ${r[1]}/${et.length} · Act.3 ${r[2]}/${et.length}`;
     $("#help").textContent = `Части сменяются автоматически. До конца экзамена: ${fmt(ends[2] - t)}.`; $("#ph").textContent = (data.mode === "essai" ? "ПРОБНЫЙ ПРОГОН · " : "ЭКЗАМЕН · ") + "часть " + ph + " · осталось"; $("#clk").textContent = fmt(ends[ph-1] - t); }
-  else { $("#sum").textContent = "Экзамен завершён"; $("#help").textContent = data.ferme ? "Задания больше недоступны." : "Через 15 минут после конца задания станут недоступны."; $("#ph").textContent = ""; $("#clk").textContent = "00:00"; }
+  else { $("#sum").textContent = (data.mode === "essai" ? "Пробный прогон" : "Экзамен") + " завершён"; $("#help").textContent = "Чтобы провести новую сессию, нажмите «Сбросить»: на всех открытых страницах студентов появится пустая форма входа."; $("#ph").textContent = ""; $("#clk").textContent = "00:00"; }
   const cell = r => r ? (r.auto ? '<span class="a">⏱ ' : '<span class="m">✓ ') + new Date(r.t).toLocaleTimeString("ru-RU", {hour: "2-digit", minute: "2-digit"}) + "</span>" : "—";
   $("#rows").innerHTML = et.map(e => `<tr><td>${esc(e.nom)}</td><td>${esc(e.groupe)}</td><td class="${t - e.vu < 20000 ? "on" : "off"}">${t - e.vu < 20000 ? "●" : "○ " + (e.vu ? fmt(t - e.vu) + " назад" : "")}</td><td>${cell(e.rendus[1])}</td><td>${cell(e.rendus[2])}</td><td>${cell(e.rendus[3])}</td></tr>`).join("");
 }
