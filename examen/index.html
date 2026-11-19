@@ -253,7 +253,7 @@ function answerText(a){
 }
 function submit(a, auto){
   if (st.sent[a]) return;
-  const p = {a: "rendu", eid: st.eid, activite: a, etudiant: st.etudiant, groupe: st.groupe, auto: !!auto, envoyeLe: new Date(now()).toISOString(),
+  const p = {a: "rendu", session: st.session || "aucune", eid: st.eid, activite: a, etudiant: st.etudiant, groupe: st.groupe, auto: !!auto, envoyeLe: new Date(now()).toISOString(),
              mots: words(textOf(a)), corps: answerText(a),
              collagesTentes: st.log.paste, copiesTentees: st.log.copy, sortiesPage: st.log.blur};
   st.sent[a] = p.envoyeLe; st.outbox.push(p); save(); flush();
@@ -267,8 +267,11 @@ async function flush(){
 async function recu(p){                                 // le serveur a-t-il enregistré cette réponse ?
   try { const j = await api({a: "recu", eid: p.eid, act: p.activite}); return !!(j && j.ok && j.recu); } catch(e) { return false; } }
 async function flushLoop(){                             // une réponse ne quitte la file que lorsque le serveur confirme l'enregistrement
+  let courante = null;
+  try { courante = (await api({a: "etat"})).session; } catch(e) { lastFlushFail = Date.now(); return; }
   while (st.outbox.length) {
     const p = st.outbox[0];
+    if (p.session !== courante) { st.outbox.shift(); save(); continue; }   // réponse d'une session close par « Сбросить » : on l'abandonne
     if (!(await recu(p))) {
       const ac = new AbortController(), to = setTimeout(() => ac.abort(), 30000);
       try { await fetch(ENDPOINT, {method: "POST", mode: "no-cors", headers: {"Content-Type": "text/plain;charset=utf-8"}, body: JSON.stringify(p), signal: ac.signal}); } catch(e) {}
