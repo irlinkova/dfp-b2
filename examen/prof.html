@@ -58,5 +58,5 @@ $("#start").onclick = () => { if (confirm("Начать экзамен для в
 $("#demo").onclick = () => { if (confirm("Запустить пробный прогон с учебным заданием (не экзамен), 3/3/2 мин?")) refresh("demarrer", {demo: "1"}); };
 $("#reset").onclick = () => { if (confirm("Сбросить всё: старт, список студентов, отметки о сдаче? (ответы в таблице останутся)")) refresh("reinitialiser"); };
 if (mdp) refresh();
-setInterval(() => { if (mdp) refresh(); }, 5000); setInterval(draw, 1000);
+setInterval(() => { if (mdp) refresh(); }, 10000); setInterval(draw, 1000);
 </script></body></html>

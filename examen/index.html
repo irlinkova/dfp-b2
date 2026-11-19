@@ -310,7 +310,7 @@ async function tick(){
     const over = srv && srv.debut && (srv.ferme || srv.partie === 4 || st.missedDebut === srv.debut);
     show(over ? "closed" : "login"); return; }
   const waitingStart = !srv || !srv.debut;
-  if (Date.now() - lastSync > (waitingStart || phase() === 4 ? 3000 : 30000)) await sync();   // après la fin : vérifier souvent (Сбросить / nouveau lancement)
+  if (Date.now() - lastSync > (waitingStart ? 5000 : phase() === 4 ? 10000 : 30000)) await sync();   // attente : 5 s ; après la fin : 10 s ; pendant l'examen : 30 s
   if (!srv) return;
   if (srv.ferme || (srv.debut && st.missedDebut === srv.debut)) { show("closed"); return; }
   const ph = phase(), B = bounds();
