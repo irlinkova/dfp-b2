@@ -285,7 +285,8 @@ let lastFlushFail = 0;
 /* ---------- boucle ---------- */
 let lastSync = 0;
 let lastJoin = 0;
-async function join(){ if (!st.entered) return; try { await api({a: "entrer", nom: st.etudiant, groupe: st.groupe}); } catch(e) {} lastJoin = Date.now(); }
+async function join(){ if (!st.entered) return; try { const j = await api({a: "entrer", nom: st.etudiant, groupe: st.groupe, session: st.session || "aucune"});
+  if (j && j.erreur === "session") logout(); } catch(e) {} lastJoin = Date.now(); }   // connexion d'avant « Сбросить » : refusée par le serveur
 function logout(){                                     // session terminée et réinitialisée : la place est libre pour un autre étudiant
   st = {eid: newId(), drafts: {}, sent: {}, log: {paste:0, copy:0, blur:0}, outbox: st.outbox || []}; save(); loaded = 0;
   $("#etudiant").value = ""; $("#groupe").value = ""; $("#loginMsg").classList.add("hidden");
@@ -327,6 +328,6 @@ async function tick(){
   if (loaded !== ph) { show("waiting"); await loadAct(ph); }
   if (loaded === ph) show("exam");
 }
-watermark(); flush(); join();
+watermark(); flush(); sync().then(() => join());   // d'abord vérifier la session (« Сбросить » depuis ?), seulement ensuite se réinscrire
 setInterval(tick, 1000); tick();
 </script></body></html>
