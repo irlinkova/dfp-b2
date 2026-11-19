@@ -115,8 +115,8 @@ button.main:disabled{background:#8a97ab;cursor:default}
    <tr><td>2</td><td>Rédiger le compte-rendu d'un document audio</td><td>45 min</td></tr>
    <tr><td>3</td><td>Rédiger un courriel</td><td>30 min</td></tr></table>
   <p style="font-size:14px">L'ordre des parties est imposé. À la fin de chaque partie, votre réponse est envoyée automatiquement et vous ne pouvez plus revenir en arrière. Si vous terminez avant la fin, vous pouvez envoyer votre réponse : la partie suivante s'ouvrira à l'heure prévue.<br>Pendant l'examen, la copie et le collage sont désactivés.</p>
-  <div class="row"><label for="etudiant">Prénom et NOM</label><input type="text" id="etudiant" autocomplete="name"></div>
-  <div class="row"><label for="groupe">Groupe</label><input type="text" id="groupe"></div>
+  <div class="row"><label for="etudiant">Prénom et NOM</label><input type="text" id="etudiant" autocomplete="off"></div>
+  <div class="row"><label for="groupe">Groupe</label><input type="text" id="groupe" autocomplete="off"></div>
   <div id="loginMsg" class="notice warn hidden"></div>
   <button class="main" id="enter">Entrer</button>
  </section>
@@ -172,7 +172,7 @@ const docsBox = $("#docs").parentElement;
 document.addEventListener("visibilitychange", () => { if (document.hidden && loaded) setTimeout(() => { st.log.blur++; save(); }, 800); });
 
 /* ---------- connexion ---------- */
-$("#etudiant").value = st.etudiant || ""; $("#groupe").value = st.groupe || "";
+$("#etudiant").value = ""; $("#groupe").value = "";            // jamais pré-rempli : le navigateur a pu servir à un autre étudiant
 $("#enter").onclick = async () => {
   const e = $("#etudiant").value.trim(), g = $("#groupe").value.trim(), m = $("#loginMsg");
   if (!e || !g) { m.textContent = "Indiquez votre prénom, votre nom et votre groupe."; m.classList.remove("hidden"); return; }
@@ -180,7 +180,7 @@ $("#enter").onclick = async () => {
   try { const s = await api({a: "etat"});
         if (s.ok && s.debut && (s.partie === 4 || s.ferme)) { st.missedDebut = s.debut; save(); srv = s; show("closed"); $("#enter").disabled = false; return; }
         const j = await api({a: "entrer", nom: e, groupe: g}); if (!j.ok) throw 0;
-        st.etudiant = e; st.groupe = g; st.entered = true; save(); watermark(); srv = j; tick(); }
+        st.etudiant = e; st.groupe = g; st.entered = true; st.session = j.session; save(); watermark(); srv = j; tick(); }
   catch(err) { m.textContent = "Connexion impossible. Vérifiez votre connexion Internet et réessayez."; m.classList.remove("hidden"); }
   $("#enter").disabled = false;
 };
@@ -291,7 +291,7 @@ function logout(){                                     // session terminée et r
   $("#etudiant").value = ""; $("#groupe").value = ""; $("#loginMsg").classList.add("hidden");
   document.documentElement.style.removeProperty("--wm"); $("#docs").innerHTML = ""; $("#answer").innerHTML = ""; }
 async function sync(){ try { const j = await api({a: "etat"}); if (j.ok) {
-    if (st.entered && st.debutRef && j.debut !== st.debutRef) logout();      // « Сбросить » (ou nouvelle session) après la session de cet étudiant
+    if (st.entered && (st.session !== j.session || (st.debutRef && j.debut !== st.debutRef))) logout();   // « Сбросить » depuis la connexion de cet étudiant
     if (j.debut && st.debutRef !== j.debut) {
       if (!st.entered && (j.partie === 4 || j.ferme)) st.missedDebut = j.debut;   // examen déjà fini quand on le découvre
       st.debutRef = j.debut; save();
