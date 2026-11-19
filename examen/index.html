@@ -150,9 +150,9 @@ const fmt = ms => { ms = Math.max(0, ms); const s = Math.floor(ms/1000), h = Mat
   return (h ? h + ":" + String(m).padStart(2,"0") : String(m).padStart(2,"0")) + ":" + String(x).padStart(2,"0"); };
 const words = s => (s.trim().match(/[^\s]+/g) || []).length;
 
-async function api(params){
+async function api(params, delaiMax){
   const u = ENDPOINT + "?" + new URLSearchParams(Object.assign({eid: st.eid}, params)).toString();
-  const t0 = Date.now(); const ac = new AbortController(), to = setTimeout(() => ac.abort(), 15000);
+  const t0 = Date.now(); const ac = new AbortController(), to = setTimeout(() => ac.abort(), delaiMax || 15000);
   let j; try { const r = await fetch(u, {cache: "no-store", signal: ac.signal}); j = await r.json(); } finally { clearTimeout(to); }
   const t1 = Date.now();
   if (j.now) offset = j.now - (t0 + t1) / 2;
@@ -190,7 +190,7 @@ function bounds(){ if (!srv || !srv.debut) return null; const f = []; let t = sr
   return {ends: f, warn: srv.durees[0] < 10 ? [60e3, 20e3] : [600e3, 120e3]}; }
 function phase(){ const B = bounds(); if (!B) return 0; const t = now(); if (t < srv.debut) return 0;
   return t < B.ends[0] ? 1 : t < B.ends[1] ? 2 : t < B.ends[2] ? 3 : 4; }
-let loading = false;
+let loading = false; const chargerApres = {};
 async function loadAct(a){
   if (loading) return; loading = true;
   try {
@@ -206,14 +206,14 @@ async function loadAct(a){
           <div class="flash" id="fl"></div><div class="notice hidden" id="stt"></div><button class="main" id="send">Envoyer et terminer la partie ${a}</button>`;
     $("#answer").innerHTML = h; $("#answer").dataset.min = c.min; $("#answer").dataset.max = c.max; st.labels = st.labels || {}; st.labels[a] = c.champs; save();
     wireAnswer(a);
-    if (c.audio) loadAudio();
+    if (c.audio) setTimeout(loadAudio, Math.floor(Math.random() * 20000));   // étalé sur 0–20 s : l'étudiant lit d'abord la consigne
     document.querySelector(".docs").scrollTop = 0; window.scrollTo(0, 0);
   } catch(e) {}
   loading = false;
 }
 async function loadAudio(){
   for (let k = 0; k < 5; k++) {
-    try { const j = await api({a: "audio"}); if (!j.ok && j.erreur === "inconnu") await join(); if (j.ok) {
+    try { const j = await api({a: "audio"}, 60000); if (!j.ok && j.erreur === "inconnu") await join(); if (j.ok) {
         const bin = atob(j.b64), u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
         const url = URL.createObjectURL(new Blob([u8], {type: j.type}));
         $("#audioZone").innerHTML = `<audio controls preload="auto" src="${url}" controlsList="nodownload"></audio><div class="hint">Vous pouvez réécouter le document autant de fois que vous le souhaitez.</div>`;
@@ -256,6 +256,7 @@ function submit(a, auto){
   const p = {a: "rendu", session: st.session || "aucune", eid: st.eid, activite: a, etudiant: st.etudiant, groupe: st.groupe, auto: !!auto, envoyeLe: new Date(now()).toISOString(),
              mots: words(textOf(a)), corps: answerText(a),
              collagesTentes: st.log.paste, copiesTentees: st.log.copy, sortiesPage: st.log.blur};
+  if (auto) p.pasAvant = Date.now() + Math.floor(Math.random() * 8000);   // envoi automatique étalé sur 0–8 s : 15 pages ne frappent pas le serveur à la même seconde
   st.sent[a] = p.envoyeLe; st.outbox.push(p); save(); flush();
   if (loaded === a) { $$("#answer textarea").forEach(t => t.disabled = true); $("#send").disabled = true; }
 }
@@ -271,9 +272,10 @@ async function flushLoop(){                             // une réponse ne quitt
   try { courante = (await api({a: "etat"})).session; } catch(e) { lastFlushFail = Date.now(); return; }
   while (st.outbox.length) {
     const p = st.outbox[0];
+    const att = (p.pasAvant || 0) - Date.now(); if (att > 0) await new Promise(r => setTimeout(r, Math.min(att, 8000)));
     if (p.session !== courante) { st.outbox.shift(); save(); continue; }   // réponse d'une session close par « Сбросить » : on l'abandonne
     if (!(await recu(p))) {
-      const ac = new AbortController(), to = setTimeout(() => ac.abort(), 30000);
+      const ac = new AbortController(), to = setTimeout(() => ac.abort(), 60000);
       try { await fetch(ENDPOINT, {method: "POST", mode: "no-cors", headers: {"Content-Type": "text/plain;charset=utf-8"}, body: JSON.stringify(p), signal: ac.signal}); } catch(e) {}
       clearTimeout(to);
       let ok = false;
@@ -294,7 +296,11 @@ function logout(){                                     // session terminée et r
   st = {eid: newId(), drafts: {}, sent: {}, log: {paste:0, copy:0, blur:0}, outbox: st.outbox || []}; save(); loaded = 0;
   $("#etudiant").value = ""; $("#groupe").value = ""; $("#loginMsg").classList.add("hidden");
   document.documentElement.style.removeProperty("--wm"); $("#docs").innerHTML = ""; $("#answer").innerHTML = ""; }
-async function sync(){ try { const j = await api({a: "etat"}); if (j.ok) {
+let syncDepuis = 0;                                     // « vérification en cours » depuis… (0 = aucune)
+async function sync(){
+  if (syncDepuis && Date.now() - syncDepuis < 20000) return;   // une seule à la fois ; au-delà de 20 s on considère l'ancienne perdue
+  syncDepuis = Date.now();
+  try { const j = await api({a: "etat"}); if (j.ok) {
     if (st.entered && (st.session !== j.session || (st.debutRef && j.debut !== st.debutRef))) logout();   // « Сбросить » depuis la connexion de cet étudiant
     if (j.debut && st.debutRef !== j.debut) {
       if (!st.entered && (j.partie === 4 || j.ferme)) st.missedDebut = j.debut;   // examen déjà fini quand on le découvre
@@ -302,9 +308,10 @@ async function sync(){ try { const j = await api({a: "etat"}); if (j.ok) {
     }
     srv = j;
     if (!j.debut) { loaded = 0; if (Date.now() - lastJoin > 30000) join(); }    // en attente : rester inscrit
-    $("#modeLbl").textContent = j.mode === "essai" ? "ESSAI TECHNIQUE" : "Examen blanc"; } } catch(e) {} lastSync = Date.now(); }
+    $("#modeLbl").textContent = j.mode === "essai" ? "ESSAI TECHNIQUE" : "Examen blanc"; } } catch(e) {}
+  finally { syncDepuis = 0; lastSync = Date.now(); } }
 async function tick(){
-  if (st.outbox.length && !flushing && Date.now() - lastFlushFail > 20000) flush();   // nouvel envoi au plus toutes les 20 s
+  if (st.outbox.length && !flushing && Date.now() - lastFlushFail > 30000) flush();   // nouvel envoi au plus toutes les 30 s
   const enCours = a => st.outbox.some(p => p.eid === st.eid && (a === undefined || p.activite === a));
   $("#between h2").textContent = enCours() ? "Envoi en cours…" : "Réponse enregistrée ✓";
   $("#fin h2 + p").textContent = enCours() ? "Envoi de votre réponse en cours… Ne fermez pas cette page tant que ce message est affiché."
@@ -328,7 +335,9 @@ async function tick(){
   B.warn.forEach((w, i) => { const k = ph + "-" + i; if (left <= w && left > w - 3000 && !lastWarn[k] && !st.sent[ph]) { lastWarn[k] = 1;
     toast("Plus que " + (w >= 60000 ? Math.round(w/60000) + " min" : Math.round(w/1000) + " s") + " pour la partie " + ph + " !"); } });
   if (st.sent[ph]) { show("between"); $("#betweenTxt").textContent = ph < 3 ? "La partie " + (ph+1) + " s'ouvrira automatiquement dans " + fmt(left) + "." : "L'examen se termine dans " + fmt(left) + "."; return; }
-  if (loaded !== ph) { show("waiting"); await loadAct(ph); }
+  if (loaded !== ph) { show("waiting");
+    if (!chargerApres[ph]) chargerApres[ph] = Date.now() + Math.floor(Math.random() * 3000);   // étalé sur 0–3 s
+    if (Date.now() >= chargerApres[ph]) await loadAct(ph); }
   if (loaded === ph) show("exam");
 }
 watermark(); flush(); sync().then(() => join());   // d'abord vérifier la session (« Сбросить » depuis ?), seulement ensuite se réinscrire
